@@ -5,12 +5,11 @@ import java.util.Random;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Vector2;
 
 public class Tetromino {
 	int mId;
 	Color mColor;
-	int[][] mCoords;
+	int[][] mShape;
 	
 	Point mPos = new Point(0, 0);
 	
@@ -34,7 +33,7 @@ public class Tetromino {
 		}
 	};
 	
-	int[][][] tetrominos = {
+	final int[][][] SHAPES = {
 			{
 				{0,0,0,0},
 				{1,1,1,1},
@@ -77,35 +76,36 @@ public class Tetromino {
 		Type t = Type.values()[id];
 		mColor = t.color;
 		mId = t.id;
-		mCoords = tetrominos[mId];
+		mShape = SHAPES[mId];
+		mPos = new Point(Dimens.WIDTH/2, Dimens.HEIGHT-2);
 	}
 	
 	void rotate(){
 		int center;
-		int width = mCoords[0].length;
+		int width = mShape[0].length;
 		
 		if(width == 3){
 			center = 1;
 		}else{
 			center = 2;
 		}
-		for(int y = 0 ; y < mCoords.length; y++){
-			for (int x = 0; x < mCoords[y].length; x++) {
-				if(mCoords[y][x] != 0 && y != center && x != center){
+		for(int y = 0 ; y < mShape.length; y++){
+			for (int x = 0; x < mShape[y].length; x++) {
+				if(mShape[y][x] != 0 && y != center && x != center){
 					if(x > width/2){
 						if(x < width){
-							mCoords[y][x]++;
+							mShape[y][x]++;
 							//x++;
 						}
 					}else{
 						if(x > 0){
-							mCoords[y][x]--;
+							mShape[y][x]--;
 						//	x--;
 						}
 					}
 					if(y < width/2){
 						if(y < width){
-							mCoords[y][x]++;
+							mShape[y][x]++;
 							//y++;
 						}
 					}else{
@@ -124,9 +124,9 @@ public class Tetromino {
 	}
 	
 	public void print() {		
-		for(int y = 0 ; y < mCoords.length; y++){
-			for (int x = 0; x < mCoords[y].length; x++) {
-				if(mCoords[y][x] != 0){
+		for(int y = 0 ; y < mShape.length; y++){
+			for (int x = 0; x < mShape[y].length; x++) {
+				if(mShape[y][x] != 0){
 					System.out.print("[]");
 				}else {
 					System.out.print("  ");
@@ -138,9 +138,9 @@ public class Tetromino {
 	public void draw(ShapeRenderer sr){
 		sr.setColor(mColor);
 		sr.begin(ShapeType.Filled);
-		for(int i = 0 ; i < mCoords.length; i++){
-			for (int j = 0; j < mCoords[i].length; j++) {
-				if(mCoords[i][j] != 0){
+		for(int i = 0 ; i < mShape.length; i++){
+			for (int j = 0; j < mShape[i].length; j++) {
+				if(mShape[i][j] != 0){
 					sr.rect(mPos.x*Dimens.CELL+Dimens.CELL*j,mPos.y*Dimens.CELL+ Dimens.CELL*i, Dimens.CELL, Dimens.CELL);
 				}
 			}

@@ -9,6 +9,7 @@ public class TetrominoStack {
 			stack[i] = new Tetromino();
 		}
 	}
+	
 	Tetromino getNextPiece(){
 		Tetromino tmp = stack[stack.length-1];
 		
