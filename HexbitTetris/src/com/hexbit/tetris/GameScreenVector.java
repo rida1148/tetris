@@ -72,19 +72,10 @@ public class GameScreenVector implements Screen{
 	}
 	
 	private void checkInput() {
-		//TODO check if fits
-		if(Gdx.input.isKeyPressed(Keys.DOWN)){
-			currentTetromino.move(0,-1);
+		if(Gdx.input.isKeyPressed(Keys.R)){
+			reset();
 		}
-		if(Gdx.input.isKeyPressed(Keys.UP)){
-			currentTetromino.rotate();
-		}
-		if(Gdx.input.isKeyPressed(Keys.LEFT)){
-			currentTetromino.move(-1,0);
-		}
-		if(Gdx.input.isKeyPressed(Keys.RIGHT)){
-			currentTetromino.move(1,0);
-		}
+		currentTetromino.handleInput(matrix);
 	}
 
 	
