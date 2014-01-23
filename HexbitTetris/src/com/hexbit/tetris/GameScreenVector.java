@@ -11,7 +11,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class GameScreenVector implements Screen{
 	//constants
 	
-	final float SPEED  = 0.3f;
+	final float PLAY_SPEED  = 0.3f;
+	final float INPUT_SPEED = 0.05f;
 	
 	//game variables
 	Matrix matrix;
@@ -19,6 +20,7 @@ public class GameScreenVector implements Screen{
 	Tetromino currentTetromino;
 	
 	float count = 0;
+	float count2 = 0;
 	
 	//graphics
 	
@@ -53,14 +55,25 @@ public class GameScreenVector implements Screen{
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		if(count > SPEED){
-			if(matrix.fits(new Point(0, -1), currentTetromino)){//TODO check if fits
+		if(count > PLAY_SPEED){
+			if(matrix.fits(new Point(0, -1),currentTetromino)){//TODO check if fits
 				currentTetromino.move(0, -1);
+				System.out.println("fits");
+			}else{
+				System.out.println("not fits");
 			}
 			count = 0;
 		}
 		count += delta;
-		//TODO possible optimise by doing all renders in one call 
+		
+		if(count2 > INPUT_SPEED){
+			checkInput();
+			count2 = 0;
+			//System.out.println(matrix.fits(currentTetromino));
+		}
+		count2 += delta;
+		
+		//TODO optimise by doing all renders in one call 
 		//e.g. shapeRenderer.begin()... do all rendering
 		currentTetromino.draw(shapeRenderer);
 		matrix.draw(shapeRenderer);
@@ -68,7 +81,7 @@ public class GameScreenVector implements Screen{
 		spriteBatch.begin();
 		font.draw(spriteBatch, "FPS: "+Gdx.graphics.getFramesPerSecond(),0 , Gdx.graphics.getHeight()-20);
 		spriteBatch.end();
-		checkInput();
+		
 	}
 	
 	private void checkInput() {
@@ -78,30 +91,19 @@ public class GameScreenVector implements Screen{
 		currentTetromino.handleInput(matrix);
 	}
 
-	
-
 	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
+	public void hide() {	
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
 	}
-
 }

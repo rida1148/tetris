@@ -49,7 +49,7 @@ public class Tetromino {
 		//mShape = SHAPES[mId];
 		rotationStates = RotationStateList.values()[id].getRotationStates();
 		
-		mPos = new Point(Dimens.GRID_WIDTH/2, Dimens.GRID_HEIGHT-2);
+		mPos = new Point(Dimens.GRID_WIDTH/2, Dimens.GRID_HEIGHT-1);
 	}
 	/*
 	void rotate(){
@@ -121,13 +121,27 @@ public class Tetromino {
 					currentRotationState = 0;
 				}
 			}
-			
 		}
+		if(Gdx.input.isKeyPressed(Keys.SPACE)){
+			hardDrop(matrix);
+		}
+	}
+	
+	void move(Point p){
+		move(p.x,p.y);
 	}
 	
 	public void move(int x, int y){
 		mPos.x += x;
 		mPos.y += y;
+	}
+	//FIXME hard drop freezes
+	void hardDrop(Matrix matrix){
+		Point movement = new Point(0, 0);
+		while(matrix.fits(movement, this)){
+			movement.y++;
+		}
+		move(movement);		
 	}
 	
 	public void print() {
