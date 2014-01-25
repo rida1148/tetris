@@ -56,12 +56,13 @@ public class GameScreenVector implements Screen{
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		if(count > PLAY_SPEED){
-			if(matrix.fits(new Point(0, -1),currentTetromino)){//TODO check if fits
-				currentTetromino.move(0, -1);
-				System.out.println("fits");
-			}else{
-				System.out.println("not fits");
-			}
+//			if(matrix.fits(new Point(0, -1),currentTetromino)){//TODO check if fits
+//				currentTetromino.move(0, -1);
+//				System.out.println("fits");
+//			}else{
+//				System.out.println("not fits");
+//			}
+			System.out.println(matrix.isValid(currentTetromino));
 			count = 0;
 		}
 		count += delta;
@@ -69,17 +70,15 @@ public class GameScreenVector implements Screen{
 		if(count2 > INPUT_SPEED){
 			checkInput();
 			count2 = 0;
-			//System.out.println(matrix.fits(currentTetromino));
 		}
 		count2 += delta;
 		
-		//TODO optimise by doing all renders in one call 
-		//e.g. shapeRenderer.begin()... do all rendering
-		currentTetromino.draw(shapeRenderer);
+		currentTetromino.draw(shapeRenderer,matrix);
 		matrix.draw(shapeRenderer);
 		
 		spriteBatch.begin();
 		font.draw(spriteBatch, "FPS: "+Gdx.graphics.getFramesPerSecond(),0 , Gdx.graphics.getHeight()-20);
+		font.draw(spriteBatch, currentTetromino.getShapeOrigin().toString(),0 , Gdx.graphics.getHeight()-40);
 		spriteBatch.end();
 		
 	}

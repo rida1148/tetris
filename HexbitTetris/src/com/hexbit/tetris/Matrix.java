@@ -24,71 +24,77 @@ public class Matrix {
 			}
 		}
 	}
-//
-//	public boolean fitsOld(Point movement, Tetromino t) {
+
+//	public boolean fits(Point movement,Tetromino t) {
 //		int[][] coords = t.getShape();
-//
+//		//TODO optimise by only checking parts of shape you need to
 //		
-//		for (int i = 0; i < coords.length - 1; i++) {
-//			for (int j = 0; j < coords[i].length - 1; j++) {
-//				if(coords[i][j] != 0){
-//					// moving through sqaure in the shape shape
-//					
-//					int y = coords[i][j] + t.mPos.y + movement.y;
-//					int x = coords[i][j] + t.mPos.x + movement.x;
+//		int count = 0;
+//		
+//		// moving through each part of shape
+//		for (int h = 0; h < coords.length; h++) {
+//			//System.out.println(i);
+//			for (int w = 0; w < coords[h].length; w++) {
+//				
+//				//System.out.println(j);
+//				if(coords[h][w] != 0){
+//
+//					int y = coords[h][w] + t.mPos.y + movement.y;
+//					int x = coords[h][w] + t.mPos.x + movement.x;
 //					
 //					if(y < 0){
+//						System.out.println("y: "+y);
 //						return false;
 //					}
-//					if(x < 0 || x > GRID_WIDTH){
+//					if(x < 0 || x > (GRID_WIDTH-1)){
+//						System.out.println("x: "+x);
 //						return false;
 //					}
-//
-//					if(matrix[i][j] != 0){
+//					//System.out.println(matrix[y][x]);
+//					if(matrix[y][x] != 0){
 //						return false;
 //					}
 //				}
 //				
 //			}
 //		}
+//		//System.out.println("count :"+count);
 //		return true;
 //	}
-
-	public boolean fits(Point movement,Tetromino t) {
-		int[][] coords = t.getShape();
-		//TODO optimise by only checking parts of shape you need to
+	
+	boolean isValid(Tetromino t){
+		int[][] shape = t.getShape();
+		Point origin = t.getShapeOrigin();
+		Point pos = t.getPos();
 		
-		int count = 0;
-		
-		// moving through each part of shape
-		for (int h = 0; h < coords.length; h++) {
-			//System.out.println(i);
-			for (int w = 0; w < coords[h].length; w++) {
-				
-				//System.out.println(j);
-				if(coords[h][w] != 0){
-
-					int y = coords[h][w] + t.mPos.y + movement.y;
-					int x = coords[h][w] + t.mPos.x + movement.x;
-					
-					if(y < 0){
-						System.out.println("y: "+y);
+		for (int i = 0; i < shape.length; i++) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if(shape[i][j] == 1){
+					int xPos = j+pos.x-origin.x;
+					if(xPos < 0 || xPos >= GRID_WIDTH){
+						System.out.println("x");
 						return false;
 					}
-					if(x < 0 || x > (GRID_WIDTH-1)){
-						System.out.println("x: "+x);
+					int yPos = i+pos.y-origin.y;
+					if(yPos < 0){
+						System.out.println("y");
 						return false;
 					}
-					//System.out.println(matrix[y][x]);
-					if(matrix[y][x] != 0){
+					if(matrix[yPos][xPos] != 0){
+						System.out.println("grid @ : x: "+xPos+" y: "+yPos);
 						return false;
 					}
-				}
-				
+				}	
 			}
 		}
-		//System.out.println("count :"+count);
+		
 		return true;
+	}
+	
+	boolean isValid(Tetromino t,Point move){
+		Point cPos = t.getPos();
+		t.setPos(new Point(cPos.x+move.x,cPos.y+move.y));
+		return isValid(t);
 	}
 	
 	public void draw(ShapeRenderer sr) {

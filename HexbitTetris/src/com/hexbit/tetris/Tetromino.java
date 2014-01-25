@@ -11,8 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 public class Tetromino {
 	int mId;
 	Color mColor;
-	
-	//int[][] mShape;
+	Color mGhostColor;
 	
 	int[][][] rotationStates;
 	
@@ -21,6 +20,9 @@ public class Tetromino {
 	Point mPos = new Point(0, 0);
 	
 	public static Random random = new Random();
+	
+	static final boolean ghost = false;
+	
 	
 	enum Type{ 
 		I(0,Color.CYAN), 
@@ -44,6 +46,7 @@ public class Tetromino {
 		int id = random.nextInt(7);
 		Type t = Type.values()[id];
 		mColor = t.color;
+		mGhostColor = new Color(mColor.r,mColor.g,mColor.b,10);
 		mId = t.id;
 		currentRotationState = 0;
 		//mShape = SHAPES[mId];
@@ -51,97 +54,63 @@ public class Tetromino {
 		
 		mPos = new Point(Dimens.GRID_WIDTH/2, Dimens.GRID_HEIGHT-1);
 	}
-	/*
-	void rotate(){
-		int center;
-		
-		int[][] shape = getShape();
-		
-		int width = shape[0].length;
-		
-		if(width == 3){
-			center = 1;
-		}else{
-			center = 2;
-		}
-		for(int y = 0 ; y < shape.length; y++){
-			for (int x = 0; x < shape[y].length; x++) {
-				if(shape[y][x] != 0 && y != center && x != center){
-					if(x > width/2){
-						if(x < width){
-							shape[y][x]++;
-							//x++;
-						}
-					}else{
-						if(x > 0){
-							shape[y][x]--;
-						//	x--;
-						}
-					}
-					if(y < width/2){
-						if(y < width){
-							shape[y][x]++;
-							//y++;
-						}
-					}else{
-						if(y > 0){
-							//y--;
-						}
-					}
-				}
-			}
-		}
-	}
-	*/
+	final Point DOWN = new Point(0, -1);
+	final Point LEFT = new Point(-1, 0);
+	final Point RIGHT = new Point(1, 0);
 	
 	void handleInput(Matrix matrix){
 		if(Gdx.input.isKeyPressed(Keys.DOWN)){
-			if(matrix.fits(new Point(0, -1), this)){
-				move(0,-1);
+			if(matrix.isValid(this, DOWN)){
+				move(DOWN);
 			}
 		}
-		
 		if(Gdx.input.isKeyPressed(Keys.LEFT)){
-			if(matrix.fits(new Point(-1, 0), this)){
-				move(-1,0);
+			if(matrix.isValid(this, LEFT)){
+				move(LEFT);
 			}
-			
 		}
 		if(Gdx.input.isKeyPressed(Keys.RIGHT)){
-			if(matrix.fits(new Point(1, 0), this)){
-				move(1,0);
+			if(matrix.isValid(this, RIGHT)){
+				move(RIGHT);
 			}
 		}
 		if(Gdx.input.isKeyPressed(Keys.UP)){
-			
-			if(rotationStates.length > 0){
-				if(currentRotationState < rotationStates.length-1){
-					currentRotationState++;
-				}else{
-					currentRotationState = 0;
-				}
-			}
+			rotateClockwise();
 		}
 		if(Gdx.input.isKeyPressed(Keys.SPACE)){
 			hardDrop(matrix);
 		}
 	}
-	
-	void move(Point p){
-		move(p.x,p.y);
+	void rotateClockwise(){
+		if(rotationStates.length > 0){
+			if(currentRotationState < rotationStates.length-1){
+				currentRotationState++;
+			}else{
+				currentRotationState = 0;
+			}
+		}
 	}
 	
-	public void move(int x, int y){
-		mPos.x += x;
-		mPos.y += y;
+	public void move(Point move){
+		mPos.x += move.x;
+		mPos.y += move.y;
 	}
-	//FIXME hard drop freezes
+
 	void hardDrop(Matrix matrix){
 		Point movement = new Point(0, 0);
-		while(matrix.fits(movement, this)){
-			movement.y++;
+		while(matrix.isValid(this,movement)){
+			movement.y--;
 		}
 		move(movement);		
+	}
+	Point getHardDropPos(Matrix matrix){
+		Point movement = new Point(0, 0);
+		while(matrix.isValid(this,movement)){
+			movement.y--;
+		}
+		Point pos = mPos;
+		pos.sub(movement);
+		return pos;
 	}
 	
 	public void print() {
@@ -157,7 +126,7 @@ public class Tetromino {
 			System.out.println();
 		}
 	}
-	public void draw(ShapeRenderer sr){
+	public void draw(ShapeRenderer sr, Matrix matrix){
 		int[][] shape = getShape();
 		sr.setColor(mColor);
 		sr.begin(ShapeType.Filled);
@@ -168,13 +137,54 @@ public class Tetromino {
 				}
 			}
 		}
+		if(ghost){
+			sr.setColor(mGhostColor);
+			Point pos = getHardDropPos(matrix);
+			
+			for(int i = 0 ; i < shape.length; i++){
+				for (int j = 0; j < shape[i].length; j++) {
+					if(shape[i][j] != 0){
+						sr.rect(pos.x*Dimens.CELL+Dimens.CELL*j,pos.y*Dimens.CELL+ Dimens.CELL*i, Dimens.CELL, Dimens.CELL);
+					}
+				}
+			}
+		}
 		sr.end();
+		
+		
 	}
 	
-//	int[][] getShape(){
-//		return RotationStateList.values()[mId].getRotationState(rotationState);
-//	}
 	int[][] getShape(){
 		return rotationStates[currentRotationState];
+	}
+	
+	Point getShapeOrigin(){
+		Point origin = new Point(-1, 0);
+		int[][] shape = getShape();
+		
+		for(int y = 0 ; y < shape.length; y++){
+			boolean hasCell = false;
+			for (int x = 0; x < shape[y].length; x++) {
+				if(shape[y][x] == 1){
+					hasCell = true;
+					if(x < origin.x || origin.x == -1){
+						origin.x = x;
+					}
+				}
+			}
+			if(hasCell && y > origin.y){
+				origin.y = y;
+			}
+		}
+		origin.y = shape.length - origin.y;
+		
+		return origin;
+	}
+	
+	Point getPos(){
+		return mPos;
+	}
+	void setPos(Point pos){
+		mPos = pos;
 	}
 }

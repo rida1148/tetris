@@ -6,4 +6,10 @@ public class Point {
 		x = X;
 		y = Y;
 	}
+	public String toString(){
+		return "x: "+x+"\ny: "+y;
+	}
+	public Point sub(Point toSub){
+		return new Point(x-toSub.x,y-toSub.y);
+	}
 }
