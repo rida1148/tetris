@@ -20,50 +20,16 @@ public class Matrix {
 	void debugLoad(){
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < matrix[y].length - 1; x++) {
-				matrix[y][x] = Tetromino.random.nextInt(7);
+				if(Tetromino.random.nextInt(2) == 1){
+					matrix[y][x] = Tetromino.random.nextInt(7);
+				}
+				
 			}
 		}
 	}
-
-//	public boolean fits(Point movement,Tetromino t) {
-//		int[][] coords = t.getShape();
-//		//TODO optimise by only checking parts of shape you need to
-//		
-//		int count = 0;
-//		
-//		// moving through each part of shape
-//		for (int h = 0; h < coords.length; h++) {
-//			//System.out.println(i);
-//			for (int w = 0; w < coords[h].length; w++) {
-//				
-//				//System.out.println(j);
-//				if(coords[h][w] != 0){
-//
-//					int y = coords[h][w] + t.mPos.y + movement.y;
-//					int x = coords[h][w] + t.mPos.x + movement.x;
-//					
-//					if(y < 0){
-//						System.out.println("y: "+y);
-//						return false;
-//					}
-//					if(x < 0 || x > (GRID_WIDTH-1)){
-//						System.out.println("x: "+x);
-//						return false;
-//					}
-//					//System.out.println(matrix[y][x]);
-//					if(matrix[y][x] != 0){
-//						return false;
-//					}
-//				}
-//				
-//			}
-//		}
-//		//System.out.println("count :"+count);
-//		return true;
-//	}
 	
-	boolean isValid(Tetromino t){
-		int[][] shape = t.getShape();
+	boolean isValid(final Tetromino t){
+		final int[][] shape = t.getShape();
 		Point origin = t.getShapeOrigin();
 		Point pos = t.getPos();
 		
@@ -91,10 +57,12 @@ public class Matrix {
 		return true;
 	}
 	
-	boolean isValid(Tetromino t,Point move){
-		Point cPos = t.getPos();
-		t.setPos(new Point(cPos.x+move.x,cPos.y+move.y));
-		return isValid(t);
+	boolean isValid(Tetromino tetromino,Point move){
+		Point cPos = tetromino.getPos();
+		Tetromino tmp = new Tetromino(tetromino.getId());
+		tmp.setCurrentRotationState(tetromino.getCurrentRotationState());
+		tmp.setPos(new Point(cPos.x+move.x,cPos.y+move.y));
+		return isValid(tmp);
 	}
 	
 	public void draw(ShapeRenderer sr) {

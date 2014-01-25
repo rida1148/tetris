@@ -19,9 +19,6 @@ public class GameScreenVector implements Screen{
 	TetrominoStack tetrominoStack = new TetrominoStack();
 	Tetromino currentTetromino;
 	
-	float count = 0;
-	float count2 = 0;
-	
 	//graphics
 	
 	SpriteBatch spriteBatch;
@@ -51,27 +48,25 @@ public class GameScreenVector implements Screen{
 		matrix = new Matrix();
 	}
 	
+	float count = 0;
+	
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		if(count > PLAY_SPEED){
-//			if(matrix.fits(new Point(0, -1),currentTetromino)){//TODO check if fits
+//			if(matrix.fits(new Point(0, -1),currentTetromino)){
 //				currentTetromino.move(0, -1);
 //				System.out.println("fits");
 //			}else{
 //				System.out.println("not fits");
 //			}
-			System.out.println(matrix.isValid(currentTetromino));
+			//System.out.println(matrix.isValid(currentTetromino));
 			count = 0;
 		}
 		count += delta;
 		
-		if(count2 > INPUT_SPEED){
-			checkInput();
-			count2 = 0;
-		}
-		count2 += delta;
+		checkInput();
 		
 		currentTetromino.draw(shapeRenderer,matrix);
 		matrix.draw(shapeRenderer);
