@@ -23,14 +23,13 @@ public class Matrix {
 				if(Tetromino.random.nextInt(2) == 1){
 					matrix[y][x] = Tetromino.random.nextInt(7);
 				}
-				
 			}
 		}
 	}
 	
 	boolean isValid(final Tetromino t){
 		final int[][] shape = t.getShape();
-		Point origin = t.getShapeOrigin();
+		Point origin = t.getOrigin();
 		Point pos = t.getPos();
 		
 		for (int i = 0; i < shape.length; i++) {
@@ -38,16 +37,13 @@ public class Matrix {
 				if(shape[i][j] == 1){
 					int xPos = j+pos.x-origin.x;
 					if(xPos < 0 || xPos >= GRID_WIDTH){
-						System.out.println("x");
 						return false;
 					}
 					int yPos = i+pos.y-origin.y;
 					if(yPos < 0){
-						System.out.println("y");
 						return false;
 					}
 					if(matrix[yPos][xPos] != 0){
-						System.out.println("grid @ : x: "+xPos+" y: "+yPos);
 						return false;
 					}
 				}	
@@ -66,7 +62,7 @@ public class Matrix {
 	}
 	
 	public void draw(ShapeRenderer sr) {
-		sr.translate(DESKTOP_MARGIN, DESKTOP_MARGIN,0);
+
 		sr.begin(ShapeType.Filled);
 		for (int y = 0; y < matrix.length - 1; y++) {
 			for (int x = 0; x < matrix[y].length - 1; x++) {
@@ -88,7 +84,7 @@ public class Matrix {
 		for (int x = 0; x < Dimens.GRID_WIDTH; x++) {
 			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
 		}
-		sr.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
+		
 		/*
 		for (int y = 0; y < Dimens.HEIGHT; y++) {
 			sr.line(DESKTOP_MARGIN, CELL*y + DESKTOP_MARGIN, DESKTOP_WIDTH-DESKTOP_MARGIN, CELL*y + DESKTOP_MARGIN);
@@ -98,6 +94,18 @@ public class Matrix {
 		}*/
 		sr.end();
 	}
+	
+	boolean isGameOver(){
+		for (int i = 1; i < 3; i++) {
+			for(int j = 0; j < matrix[0].length; j++){
+				if(matrix[GRID_HEIGHT-i][j] != 0){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	void setCell(Point pos,int num){
 		matrix[pos.y][pos.x] = num;
 	}

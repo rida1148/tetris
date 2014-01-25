@@ -1,5 +1,7 @@
 package com.hexbit.tetris;
 
+import static com.hexbit.tetris.Dimens.DESKTOP_MARGIN;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -50,25 +52,27 @@ public class GameScreenVector implements Screen{
 	
 	float count = 0;
 	
-	//TODO why does it translate
-	
+	//TODO limit keys being held down
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		if(count > PLAY_SPEED){
-//			if(matrix.fits(new Point(0, -1),currentTetromino)){
-//				currentTetromino.move(0, -1);
-//				System.out.println("fits");
-//			}else{
-//				System.out.println("not fits");
-//			}
-			//System.out.println(matrix.isValid(currentTetromino));
+			if(matrix.isValid(currentTetromino,Tetromino.DOWN)){
+				currentTetromino.move(Tetromino.DOWN);
+			}else{
+				currentTetromino.addToMatrix(matrix);
+			}
+
 			count = 0;
 		}
 		count += delta;
 		
 		checkInput();
+		
+		if(matrix.isGameOver()){
+			reset();
+		}
 		
 		if(currentTetromino.done){
 			currentTetromino = tetrominoStack.getNextPiece();
@@ -76,14 +80,14 @@ public class GameScreenVector implements Screen{
 		
 		//render -------------------------------
 		
-		
+		//sr.translate(DESKTOP_MARGIN, DESKTOP_MARGIN,0);
 		matrix.draw(shapeRenderer);
 		currentTetromino.draw(shapeRenderer,matrix);
-		
+		//sr.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
 		
 		spriteBatch.begin();
 		font.draw(spriteBatch, "FPS: "+Gdx.graphics.getFramesPerSecond(),0 , Gdx.graphics.getHeight()-20);
-		font.draw(spriteBatch, currentTetromino.getShapeOrigin().toString(),0 , Gdx.graphics.getHeight()-40);
+		font.draw(spriteBatch, currentTetromino.getOrigin().toString(),0 , Gdx.graphics.getHeight()-40);
 		spriteBatch.end();
 		
 	}

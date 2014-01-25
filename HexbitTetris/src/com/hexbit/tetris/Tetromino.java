@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import static com.hexbit.tetris.Dimens.*;
 
 public class Tetromino {
+	
 	private int mId;
 	private Color mColor;
 	private Color mGhostColor;
@@ -22,9 +23,9 @@ public class Tetromino {
 	public static Random random = new Random();
 	static final boolean ghost = false;
 	
-	final Point DOWN = new Point(0, -1);
-	final Point LEFT = new Point(-1, 0);
-	final Point RIGHT = new Point(1, 0);
+	public static final Point DOWN = new Point(0, -1);
+	public static final Point LEFT = new Point(-1, 0);
+	public static final Point RIGHT = new Point(1, 0);
 
 	enum Type {
 		I(0, Color.CYAN), O(1, Color.YELLOW), T(2, new Color(230, 230, 259, 0)), S(
@@ -39,6 +40,7 @@ public class Tetromino {
 			color = c;
 		}
 	};
+	
 
 	public Tetromino() {
 		this(random.nextInt(7));
@@ -53,7 +55,8 @@ public class Tetromino {
 		// mShape = SHAPES[mId];
 		rotationStates = RotationStateList.values()[id].getRotationStates();
 
-		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT - 1 - getShape().length);
+		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT - getShape().length);
+		//print();
 	}
 
 	void handleInput(Matrix matrix) {
@@ -121,6 +124,8 @@ public class Tetromino {
 			System.out.println();
 		}
 	}
+	
+	//TODO fix upside down shit
 
 	public void draw(ShapeRenderer sr, Matrix matrix) {
 		int[][] shape = getShape();
@@ -129,7 +134,9 @@ public class Tetromino {
 		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[i].length; j++) {
 				if (shape[i][j] != 0) {
-					sr.rect(mPos.x * Dimens.CELL + Dimens.CELL * j, mPos.y
+					int x = mPos.x - getOrigin().x;
+					int y = mPos.y  - getOrigin().y;
+					sr.rect(x * Dimens.CELL + Dimens.CELL * j,y
 							* Dimens.CELL + Dimens.CELL * i, Dimens.CELL,
 							Dimens.CELL);
 				}
@@ -150,10 +157,15 @@ public class Tetromino {
 			}
 		}
 		sr.end();
-		//debug
+		debugDraw(sr);
+	}
+	
+	//TODO fix debug draw and check with origin finder to see if it works
+	void debugDraw(ShapeRenderer sr){
+		int[][] shape = getShape();
 		sr.begin(ShapeType.Line);
 		sr.setColor(Color.RED);
-		sr.rect(mPos.x*CELL, mPos.y*CELL, shape[0].length*CELL, shape.length*CELL);
+		sr.rect((mPos.x-getOrigin().x)*CELL, (mPos.y-getOrigin().y)*CELL, shape[0].length*CELL, shape.length*CELL);
 		sr.end();
 	}
 
@@ -161,8 +173,8 @@ public class Tetromino {
 		return rotationStates[mCurrentRotationState];
 	}
 	//TODO fix origin finding code
-	Point getShapeOrigin() {
-		Point origin = new Point(-1, 0);
+	Point getOrigin() {
+		Point origin = new Point(-1, -1);
 		int[][] shape = getShape();
 
 		for (int y = 0; y < shape.length; y++) {
@@ -179,7 +191,7 @@ public class Tetromino {
 				origin.y = y;
 			}
 		}
-		origin.y = shape.length - origin.y;
+		origin.y = shape.length - origin.y -1; //-1 because of .length counts starting at 1
 
 		return origin;
 	}
@@ -189,8 +201,8 @@ public class Tetromino {
 		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[i].length; j++) {
 				if(shape[i][j] == 1){
-					int x = getPos().x+j-getShapeOrigin().x;
-					int y = getPos().y+i-getShapeOrigin().y;
+					int x = getPos().x+j-getOrigin().x;
+					int y = getPos().y+i-getOrigin().y;
 					matrix.setCell(new Point(x,y), mId+1);
 				}
 			}
