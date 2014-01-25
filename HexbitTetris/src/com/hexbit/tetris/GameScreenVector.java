@@ -50,6 +50,8 @@ public class GameScreenVector implements Screen{
 	
 	float count = 0;
 	
+	//TODO why does it translate
+	
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
@@ -68,8 +70,16 @@ public class GameScreenVector implements Screen{
 		
 		checkInput();
 		
-		currentTetromino.draw(shapeRenderer,matrix);
+		if(currentTetromino.done){
+			currentTetromino = tetrominoStack.getNextPiece();
+		}
+		
+		//render -------------------------------
+		
+		
 		matrix.draw(shapeRenderer);
+		currentTetromino.draw(shapeRenderer,matrix);
+		
 		
 		spriteBatch.begin();
 		font.draw(spriteBatch, "FPS: "+Gdx.graphics.getFramesPerSecond(),0 , Gdx.graphics.getHeight()-20);

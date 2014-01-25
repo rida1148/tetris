@@ -98,5 +98,7 @@ public class Matrix {
 		}*/
 		sr.end();
 	}
-
+	void setCell(Point pos,int num){
+		matrix[pos.y][pos.x] = num;
+	}
 }

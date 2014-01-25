@@ -8,20 +8,23 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+import static com.hexbit.tetris.Dimens.*;
+
 public class Tetromino {
-	int mId;
-	Color mColor;
-	Color mGhostColor;
-
-	int[][][] rotationStates;
-
-	int currentRotationState;
-
-	Point mPos = new Point(0, 0);
-
+	private int mId;
+	private Color mColor;
+	private Color mGhostColor;
+	private int[][][] rotationStates;
+	private int mCurrentRotationState;
+	private Point mPos = new Point(0, 0);
+	boolean done = false;
+	
 	public static Random random = new Random();
-
 	static final boolean ghost = false;
+	
+	final Point DOWN = new Point(0, -1);
+	final Point LEFT = new Point(-1, 0);
+	final Point RIGHT = new Point(1, 0);
 
 	enum Type {
 		I(0, Color.CYAN), O(1, Color.YELLOW), T(2, new Color(230, 230, 259, 0)), S(
@@ -46,19 +49,14 @@ public class Tetromino {
 		mColor = t.color;
 		mGhostColor = new Color(mColor.r, mColor.g, mColor.b, 10);
 		mId = t.id;
-		currentRotationState = 0;
+		mCurrentRotationState = 0;
 		// mShape = SHAPES[mId];
 		rotationStates = RotationStateList.values()[id].getRotationStates();
 
-		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT - 1);
+		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT - 1 - getShape().length);
 	}
 
-	final Point DOWN = new Point(0, -1);
-	final Point LEFT = new Point(-1, 0);
-	final Point RIGHT = new Point(1, 0);
-
 	void handleInput(Matrix matrix) {
-		
 		if (Gdx.input.isKeyPressed(Keys.DOWN)  && matrix.isValid(this, DOWN)) {
 			move(DOWN);
 		}
@@ -78,10 +76,10 @@ public class Tetromino {
 
 	void rotateClockwise() {
 		if (rotationStates.length > 0) {
-			if (currentRotationState < rotationStates.length - 1) {
-				currentRotationState++;
+			if (mCurrentRotationState < rotationStates.length - 1) {
+				mCurrentRotationState++;
 			} else {
-				currentRotationState = 0;
+				mCurrentRotationState = 0;
 			}
 		}
 	}
@@ -97,6 +95,7 @@ public class Tetromino {
 			movement.y--;
 		}
 		move(movement);
+		addToMatrix(matrix);
 	}
 
 	Point getHardDropPos(Matrix matrix) {
@@ -151,13 +150,17 @@ public class Tetromino {
 			}
 		}
 		sr.end();
-
+		//debug
+		sr.begin(ShapeType.Line);
+		sr.setColor(Color.RED);
+		sr.rect(mPos.x*CELL, mPos.y*CELL, shape[0].length*CELL, shape.length*CELL);
+		sr.end();
 	}
 
 	int[][] getShape() {
-		return rotationStates[currentRotationState];
+		return rotationStates[mCurrentRotationState];
 	}
-
+	//TODO fix origin finding code
 	Point getShapeOrigin() {
 		Point origin = new Point(-1, 0);
 		int[][] shape = getShape();
@@ -180,6 +183,22 @@ public class Tetromino {
 
 		return origin;
 	}
+	
+	void addToMatrix(Matrix matrix){
+		int[][] shape = getShape();
+		for (int i = 0; i < shape.length; i++) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if(shape[i][j] == 1){
+					int x = getPos().x+j-getShapeOrigin().x;
+					int y = getPos().y+i-getShapeOrigin().y;
+					matrix.setCell(new Point(x,y), mId+1);
+				}
+			}
+		}
+		done = true;
+	}
+	
+	//------------------------------------------------------------------------
 
 	Point getPos() {
 		return mPos;
@@ -208,9 +227,9 @@ public class Tetromino {
 		this.mGhostColor = mGhostColor;
 	}
 	public int getCurrentRotationState() {
-		return currentRotationState;
+		return mCurrentRotationState;
 	}
 	public void setCurrentRotationState(int currentRotationState) {
-		this.currentRotationState = currentRotationState;
+		this.mCurrentRotationState = currentRotationState;
 	}
 }
