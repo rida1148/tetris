@@ -1,7 +1,5 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.DESKTOP_MARGIN;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -9,6 +7,9 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+//TODO make tetris game class so that all you change is
+//the rendering for different versions
 
 public class GameScreenVector implements Screen{
 	//constants
@@ -70,7 +71,7 @@ public class GameScreenVector implements Screen{
 		
 		checkInput();
 		
-		matrix.checkClears();
+		matrix.checkClears(shapeRenderer);
 		
 		if(matrix.isGameOver()){
 			reset();
@@ -96,6 +97,16 @@ public class GameScreenVector implements Screen{
 	private void checkInput() {
 		if(Gdx.input.isKeyPressed(Keys.R)){
 			reset();
+		}else if(Gdx.input.isKeyPressed(Keys.C)){
+			Tetromino held = tetrominoStack.getHeld();
+			if(held == null){
+				tetrominoStack.setHeld(currentTetromino);
+				currentTetromino = tetrominoStack.getNextPiece();
+			}else{
+				tetrominoStack.setHeld(currentTetromino);
+				held.resetPos();
+				currentTetromino = held;	
+			}
 		}
 		currentTetromino.handleInput(matrix);
 	}

@@ -10,6 +10,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import static com.hexbit.tetris.Dimens.*;
 
+/***
+ * 
+ * @author brett
+ * Performance class - renders using primitive shapes (apart from font)
+ */
+
+//TODO (optimise) make tetromino raw class for only data then
+// have this extend it 
+
 public class Tetromino {
 
 	private int mId;
@@ -45,6 +54,11 @@ public class Tetromino {
 		this(random.nextInt(7));
 		//this(2);
 	}
+	
+	void resetPos(){
+		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT
+				- getShape().length +1);
+	}
 
 	public Tetromino(int id) {
 		Type t = Type.values()[id];
@@ -55,8 +69,7 @@ public class Tetromino {
 		// mShape = SHAPES[mId];
 		rotationStates = RotationStateList.values()[id].getRotationStates();
 
-		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT
-				- getShape().length);
+		resetPos();
 		// print();
 	}
 
@@ -71,21 +84,30 @@ public class Tetromino {
 			move(RIGHT);
 		}
 		if (Gdx.input.isKeyPressed(Keys.UP)) {
-			rotateClockwise();
+			rotateClockwise(matrix);
 		}
 		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
 			hardDrop(matrix);
 		}
 	}
 
-	void rotateClockwise() {
+	void rotateClockwise(Matrix matrix) {
+		int nextState = mCurrentRotationState;
 		if (rotationStates.length > 0) {
 			if (mCurrentRotationState < rotationStates.length - 1) {
-				mCurrentRotationState++;
+				nextState++;
 			} else {
-				mCurrentRotationState = 0;
+				nextState = 0;
 			}
 		}
+		Tetromino test = new Tetromino(mId);
+		test.setPos(mPos);
+		test.setCurrentRotationState(nextState);
+		
+		if(matrix.isValid(test)){
+			mCurrentRotationState = nextState;
+		}
+		
 	}
 
 	public void move(Point move) {
@@ -94,21 +116,18 @@ public class Tetromino {
 	}
 
 	void hardDrop(Matrix matrix) {
-		Point movement = new Point(0, 0);
-		while (matrix.isValid(this, movement)) {
-			movement.y--;
-		}
-		move(movement);
+		mPos = getHardDropPos(matrix);
 		addToMatrix(matrix);
 	}
 
 	Point getHardDropPos(Matrix matrix) {
 		Point movement = new Point(0, 0);
 		while (matrix.isValid(this, movement)) {
-			movement.y--;
+			movement.y--; 
 		}
-		Point pos = mPos;
-		pos.sub(movement);
+		Point pos = new Point(mPos);
+		pos.add(movement);
+		pos.y++;
 		return pos;
 	}
 
@@ -125,8 +144,6 @@ public class Tetromino {
 			System.out.println();
 		}
 	}
-
-	// TODO fix upside down shit
 
 	public void draw(ShapeRenderer sr, Matrix matrix) {
 		int[][] shape = getShape();
@@ -171,6 +188,7 @@ public class Tetromino {
 	}
 
 	int[][] getShape() {
+		//TODO flip shape here for SRS
 		return rotationStates[mCurrentRotationState];
 	}
 
@@ -193,12 +211,12 @@ public class Tetromino {
 				origin.y = y;
 			}
 		}
-		origin.y = shape.length - origin.y - 1; // -1 because of .length counts
+		origin.y = shape.length - origin.y - 1; // -1 because .length counts
 												// starting at 1
 
 		return origin;
 	}
-
+	//TODO fix tetrominos diapering when on far right
 	void addToMatrix(Matrix matrix) {
 		int[][] shape = getShape();
 		for (int i = 0; i < shape.length; i++) {

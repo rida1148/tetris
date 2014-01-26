@@ -2,6 +2,12 @@ package com.hexbit.tetris;
 
 public class Point {
 	int x,y;
+	
+	public Point(Point p){
+		x = p.x;
+		y = p.y;
+	}
+	
 	public Point(int X, int Y) {
 		x = X;
 		y = Y;
@@ -9,7 +15,13 @@ public class Point {
 	public String toString(){
 		return "x: "+x+"\ny: "+y;
 	}
-	public Point sub(Point toSub){
-		return new Point(x-toSub.x,y-toSub.y);
+	public void sub(Point toSub){
+		x-=toSub.x;
+		y-=toSub.y;
 	}
+	public void add(Point a){
+		x+=a.x;
+		y+=a.y;
+	}
+
 }

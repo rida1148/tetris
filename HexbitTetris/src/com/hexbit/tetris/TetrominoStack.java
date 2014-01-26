@@ -2,7 +2,7 @@ package com.hexbit.tetris;
 
 public class TetrominoStack {
 	Tetromino[] stack = new Tetromino[10];
-	Tetromino held = new Tetromino();
+	Tetromino held = null;
 	
 	public TetrominoStack() {
 		for (int i = 0; i < stack.length; i++) {
@@ -19,5 +19,12 @@ public class TetrominoStack {
 		stack[0] = new Tetromino();
 		
 		return tmp;
+	}
+	
+	Tetromino getHeld(){
+		return held;
+	}
+	void setHeld(Tetromino h){
+		held = h;
 	}
 }

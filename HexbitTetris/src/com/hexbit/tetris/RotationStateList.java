@@ -3,7 +3,6 @@ package com.hexbit.tetris;
 //list of all rotation states for each piece
 
 public enum RotationStateList {
-		//TODO flip these all on the y axis because of the way i've implemented it
 		I(new int[][][]{
 		{
 			{0,0,0,0},

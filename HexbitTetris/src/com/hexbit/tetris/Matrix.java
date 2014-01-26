@@ -1,10 +1,10 @@
 package com.hexbit.tetris;
 
 import static com.hexbit.tetris.Dimens.CELL;
-import static com.hexbit.tetris.Dimens.DESKTOP_MARGIN;
-import static com.hexbit.tetris.Dimens.DESKTOP_WIDTH;
 import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
 import static com.hexbit.tetris.Dimens.GRID_WIDTH;
+
+import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,7 +14,7 @@ public class Matrix {
 	int[][] matrix = new int[GRID_HEIGHT][GRID_WIDTH];
 	
 	public Matrix() {
-		debugLoad();
+	//	debugLoad();
 	}
 	
 	void debugLoad(){
@@ -36,6 +36,7 @@ public class Matrix {
 			for (int j = 0; j < shape[i].length; j++) {
 				if(shape[i][j] == 1){
 					int xPos = j+pos.x-origin.x;
+					
 					if(xPos < 0 || xPos >= GRID_WIDTH){
 						return false;
 					}
@@ -64,8 +65,8 @@ public class Matrix {
 	public void draw(ShapeRenderer sr) {
 
 		sr.begin(ShapeType.Filled);
-		for (int y = 0; y < matrix.length - 1; y++) {
-			for (int x = 0; x < matrix[y].length - 1; x++) {
+		for (int y = 0; y < matrix.length; y++) {
+			for (int x = 0; x < matrix[y].length; x++) {
 				if(matrix[y][x] != 0){				
 					sr.setColor(Tetromino.Type.values()[matrix[y][x]-1].color);
 					sr.rect(x*Dimens.CELL, y*Dimens.CELL, Dimens.CELL, Dimens.CELL);
@@ -107,23 +108,43 @@ public class Matrix {
 	}
 	
 	//TODO look into how line clears + gravity works
-	
-	void checkClears(){
+	//FIXME line clearing
+	void checkClears(ShapeRenderer sr){
 		//find all lines that are full
-		
+		ArrayList<Integer> fullLines = new ArrayList<Integer>();
+		for(int i = 0 ; i < matrix.length; i ++){
+			boolean isFull = true;
+			for (int j = 0; j < matrix[0].length; j++) {
+				if(matrix[i][j] == 0){
+					isFull = false;
+					break;
+				}
+			}
+			if(isFull){
+				fullLines.add(i);
+			}
+		}
+		for (int i = 0; i < fullLines.size(); i++) {
+			for (int j = 0; j < matrix[0].length; j++) {
+				matrix[fullLines.get(i)][j] = 0;
+			}
+		}
+		draw(sr);
+		for (int i = 0; i < fullLines.size(); i++) {
+			sqeeze(fullLines.get(i)+1, fullLines.get(i));
+			System.out.println("cleared @ "+fullLines.get(i));
+		}
 		//starting from the top, see if they are next to each other
 		//for optimise and squeeze those groups as one
 
 	}
 	void sqeeze(int fromY,int toY){
 		//TODO clear space then redraw for effect
-		while(fromY != toY){
+		for (int y = toY; y < matrix.length-1; y++) {
 			for(int i = 0 ; i < matrix[0].length; i++){
-				
+				matrix[y][i] = matrix[y+1][i];
 			}
-			fromY --;
 		}
-		
 	}
 	
 	void setCell(Point pos,int num){
