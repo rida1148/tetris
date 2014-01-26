@@ -5,6 +5,7 @@ import static com.hexbit.tetris.Dimens.CELL;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -33,6 +34,10 @@ public class Tetromino {
 	public static Random random = new Random();
 	static final boolean ghost = true;
 	final float GHOST_ALPHA = 0.2f;
+	
+	private boolean leftHeld;
+	private boolean rightHeld;
+	private boolean downHeld;
 
 	public static final Point DOWN = new Point(0, -1);
 	public static final Point LEFT = new Point(-1, 0);
@@ -58,8 +63,7 @@ public class Tetromino {
 	}
 
 	void resetPos() {
-		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT
-				- getShape().length + 1);
+		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-1 );
 	}
 
 	public Tetromino(int id) {
@@ -70,27 +74,8 @@ public class Tetromino {
 		mCurrentRotationState = 0;
 		// mShape = SHAPES[mId];
 		rotationStates = RotationStateList.values()[id].getRotationStates();
-
 		resetPos();
 		// print();
-	}
-
-	void handleInput(Matrix matrix) {
-		if (Gdx.input.isKeyPressed(Keys.DOWN) && matrix.isValid(this, DOWN)) {
-			move(DOWN);
-		}
-		if (Gdx.input.isKeyPressed(Keys.LEFT) && matrix.isValid(this, LEFT)) {
-			move(LEFT);
-		}
-		if (Gdx.input.isKeyPressed(Keys.RIGHT) && matrix.isValid(this, RIGHT)) {
-			move(RIGHT);
-		}
-		if (Gdx.input.isKeyPressed(Keys.UP)) {
-			rotateClockwise(matrix);
-		}
-		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
-			hardDrop(matrix);
-		}
 	}
 
 	void rotateClockwise(Matrix matrix) {
@@ -198,6 +183,13 @@ public class Tetromino {
 
 	int[][] getShape() {
 		// TODO flip shape here for SRS
+		int[][] original = rotationStates[mCurrentRotationState];
+		int[][] flipped = new int[original.length][original[0].length];
+		for (int i = 0; i < original.length; i++) {
+			for (int j = 0; j < flipped.length; j++) {
+				flipped[flipped.length-i-1][j] = original[i][j];
+			}
+		}
 		return rotationStates[mCurrentRotationState];
 	}
 
@@ -239,6 +231,19 @@ public class Tetromino {
 			}
 		}
 		done = true;
+	}
+	
+	void update(Matrix matrix){
+		if (isRightHeld()
+				&& matrix.isValid(this, Tetromino.RIGHT)) {
+			move(Tetromino.RIGHT);
+		} else if (isLeftHeld()
+				&& matrix.isValid(this, Tetromino.LEFT)) {
+			move(Tetromino.LEFT);
+		}
+		if(downHeld && matrix.isValid(this, DOWN)){
+			move(DOWN);
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -282,4 +287,88 @@ public class Tetromino {
 	public void setCurrentRotationState(int currentRotationState) {
 		this.mCurrentRotationState = currentRotationState;
 	}
+
+	// ------------------
+	public InputProcessor INPUT_PROCESSOR = new InputProcessor() {
+		@Override
+		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean touchDragged(int screenX, int screenY, int pointer) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer,
+				int button) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean scrolled(int amount) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean mouseMoved(int screenX, int screenY) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean keyUp(int keycode) {
+			/*
+			
+			*/
+			return false;
+		}
+
+		@Override
+		public boolean keyTyped(char character) {
+
+			return false;
+		}
+
+		@Override
+		public boolean keyDown(int keycode) {
+			
+			
+			
+			return false;
+		}
+	};
+	public InputProcessor getINPUT_PROCESSOR() {
+		return INPUT_PROCESSOR;
+	}
+
+	public boolean isRightHeld() {
+		return rightHeld;
+	}
+
+	public void setRightHeld(boolean rightHeld) {
+		this.rightHeld = rightHeld;
+	}
+
+	public boolean isLeftHeld() {
+		return leftHeld;
+	}
+
+	public void setLeftHeld(boolean leftHeld) {
+		this.leftHeld = leftHeld;
+	}
+	
+	public boolean isDownHeld() {
+		return downHeld;
+	}
+
+	public void setDownHeld(boolean downHeld){
+		this.downHeld = downHeld;
+	}
+
 }
