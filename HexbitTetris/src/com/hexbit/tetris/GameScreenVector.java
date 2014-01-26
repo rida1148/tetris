@@ -70,6 +70,8 @@ public class GameScreenVector implements Screen{
 		
 		checkInput();
 		
+		matrix.checkClears();
+		
 		if(matrix.isGameOver()){
 			reset();
 		}
@@ -88,8 +90,7 @@ public class GameScreenVector implements Screen{
 		spriteBatch.begin();
 		font.draw(spriteBatch, "FPS: "+Gdx.graphics.getFramesPerSecond(),0 , Gdx.graphics.getHeight()-20);
 		font.draw(spriteBatch, currentTetromino.getOrigin().toString(),0 , Gdx.graphics.getHeight()-40);
-		spriteBatch.end();
-		
+		spriteBatch.end();	
 	}
 	
 	private void checkInput() {

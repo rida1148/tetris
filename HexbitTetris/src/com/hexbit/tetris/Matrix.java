@@ -106,6 +106,26 @@ public class Matrix {
 		return false;
 	}
 	
+	//TODO look into how line clears + gravity works
+	
+	void checkClears(){
+		//find all lines that are full
+		
+		//starting from the top, see if they are next to each other
+		//for optimise and squeeze those groups as one
+
+	}
+	void sqeeze(int fromY,int toY){
+		//TODO clear space then redraw for effect
+		while(fromY != toY){
+			for(int i = 0 ; i < matrix[0].length; i++){
+				
+			}
+			fromY --;
+		}
+		
+	}
+	
 	void setCell(Point pos,int num){
 		matrix[pos.y][pos.x] = num;
 	}
