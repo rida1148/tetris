@@ -1,23 +1,24 @@
 package com.hexbit.tetris;
 
+import static com.hexbit.tetris.Dimens.CELL;
+
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-import static com.hexbit.tetris.Dimens.*;
-
 /***
  * 
- * @author brett
- * Performance class - renders using primitive shapes (apart from font)
+ * @author brett Performance class - renders using primitive shapes (apart from
+ *         font)
  */
 
-//TODO (optimise) make tetromino raw class for only data then
-// have this extend it 
+// TODO (optimise) make tetromino raw class for only data then
+// have this extend it
 
 public class Tetromino {
 
@@ -30,7 +31,8 @@ public class Tetromino {
 	boolean done = false;
 
 	public static Random random = new Random();
-	static final boolean ghost = false;
+	static final boolean ghost = true;
+	final float GHOST_ALPHA = 0.2f;
 
 	public static final Point DOWN = new Point(0, -1);
 	public static final Point LEFT = new Point(-1, 0);
@@ -52,18 +54,18 @@ public class Tetromino {
 
 	public Tetromino() {
 		this(random.nextInt(7));
-		//this(2);
+		// this(2);
 	}
-	
-	void resetPos(){
+
+	void resetPos() {
 		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT
-				- getShape().length +1);
+				- getShape().length + 1);
 	}
 
 	public Tetromino(int id) {
 		Type t = Type.values()[id];
 		mColor = t.color;
-		mGhostColor = new Color(mColor.r, mColor.g, mColor.b, 10);
+		mGhostColor = new Color(mColor.r, mColor.g, mColor.b, GHOST_ALPHA);
 		mId = t.id;
 		mCurrentRotationState = 0;
 		// mShape = SHAPES[mId];
@@ -103,11 +105,11 @@ public class Tetromino {
 		Tetromino test = new Tetromino(mId);
 		test.setPos(mPos);
 		test.setCurrentRotationState(nextState);
-		
-		if(matrix.isValid(test)){
+
+		if (matrix.isValid(test)) {
 			mCurrentRotationState = nextState;
 		}
-		
+
 	}
 
 	public void move(Point move) {
@@ -123,7 +125,7 @@ public class Tetromino {
 	Point getHardDropPos(Matrix matrix) {
 		Point movement = new Point(0, 0);
 		while (matrix.isValid(this, movement)) {
-			movement.y--; 
+			movement.y--;
 		}
 		Point pos = new Point(mPos);
 		pos.add(movement);
@@ -153,28 +155,35 @@ public class Tetromino {
 			for (int j = 0; j < shape[i].length; j++) {
 				if (shape[i][j] != 0) {
 					int x = mPos.x - getOrigin().x + j;
-					int y =  mPos.y - getOrigin().y +i;
+					int y = mPos.y - getOrigin().y + i;
 					sr.rect(x * Dimens.CELL, y * Dimens.CELL, Dimens.CELL,
 							Dimens.CELL);
 				}
 			}
 		}
+		sr.end();
 		if (ghost) {
+			Gdx.gl.glEnable(GL10.GL_BLEND);
+			Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+			sr.begin(ShapeType.Filled);
 			sr.setColor(mGhostColor);
 			Point pos = getHardDropPos(matrix);
 
 			for (int i = 0; i < shape.length; i++) {
 				for (int j = 0; j < shape[i].length; j++) {
 					if (shape[i][j] != 0) {
-						sr.rect(pos.x * Dimens.CELL + Dimens.CELL * j, pos.y
-								* Dimens.CELL + Dimens.CELL * i, Dimens.CELL,
+						int x = pos.x - getOrigin().x + j;
+						int y = pos.y - getOrigin().y + i;
+						sr.rect(x * Dimens.CELL, y * Dimens.CELL, Dimens.CELL,
 								Dimens.CELL);
 					}
 				}
 			}
+			sr.end();
+			Gdx.gl.glDisable(GL10.GL_BLEND);
 		}
-		sr.end();
-		debugDraw(sr);
+
+		// debugDraw(sr);
 	}
 
 	// TODO fix debug draw and check with origin finder to see if it works
@@ -188,7 +197,7 @@ public class Tetromino {
 	}
 
 	int[][] getShape() {
-		//TODO flip shape here for SRS
+		// TODO flip shape here for SRS
 		return rotationStates[mCurrentRotationState];
 	}
 
@@ -216,7 +225,8 @@ public class Tetromino {
 
 		return origin;
 	}
-	//TODO fix tetrominos diapering when on far right
+
+	// TODO fix tetrominos diapering when on far right
 	void addToMatrix(Matrix matrix) {
 		int[][] shape = getShape();
 		for (int i = 0; i < shape.length; i++) {

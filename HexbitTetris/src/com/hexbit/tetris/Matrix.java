@@ -1,8 +1,6 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.CELL;
-import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
-import static com.hexbit.tetris.Dimens.GRID_WIDTH;
+import static com.hexbit.tetris.Dimens.*;
 
 import java.util.ArrayList;
 
@@ -41,7 +39,7 @@ public class Matrix {
 						return false;
 					}
 					int yPos = i+pos.y-origin.y;
-					if(yPos < 0){
+					if(yPos < 0 || yPos >= GRID_HEIGHT){
 						return false;
 					}
 					if(matrix[yPos][xPos] != 0){
@@ -86,13 +84,6 @@ public class Matrix {
 			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
 		}
 		
-		/*
-		for (int y = 0; y < Dimens.HEIGHT; y++) {
-			sr.line(DESKTOP_MARGIN, CELL*y + DESKTOP_MARGIN, DESKTOP_WIDTH-DESKTOP_MARGIN, CELL*y + DESKTOP_MARGIN);
-		}
-		for (int x = 0; x < Dimens.WIDTH; x++) {
-			sr.line(CELL*x,DESKTOP_MARGIN, CELL*x, CELL*HEIGHT);
-		}*/
 		sr.end();
 	}
 	
