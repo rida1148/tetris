@@ -5,24 +5,19 @@ import static com.hexbit.tetris.Dimens.CELL;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-/***
- * 
- * @author brett Performance class - renders using primitive shapes (apart from
- *         font)
- */
 
 // TODO (optimise) make tetromino raw class for only data then
 // have this extend it
 
 public class Tetromino {
-
+	final float KEY_HOLD_DELAY = 0.08f;
+	final float GHOST_ALPHA = 0.2f;
+	
 	private int mId;
 	private Color mColor;
 	private Color mGhostColor;
@@ -33,10 +28,15 @@ public class Tetromino {
 
 	public static Random random = new Random();
 	static final boolean ghost = true;
-	final float GHOST_ALPHA = 0.2f;
+	
+	Timer leftHeldTimer = new Timer(KEY_HOLD_DELAY);
+	Timer rightHeldTimer = new Timer(KEY_HOLD_DELAY);
 	
 	private boolean leftHeld;
 	private boolean rightHeld;
+	private boolean leftJustTapped = false;
+	private boolean rightJustTapped = false;
+	
 	private boolean downHeld;
 
 	public static final Point DOWN = new Point(0, -1);
@@ -63,7 +63,8 @@ public class Tetromino {
 	}
 
 	void resetPos() {
-		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-1 );
+	//	mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-1 );
+		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3);
 	}
 
 	public Tetromino(int id) {
@@ -72,10 +73,11 @@ public class Tetromino {
 		mGhostColor = new Color(mColor.r, mColor.g, mColor.b, GHOST_ALPHA);
 		mId = t.id;
 		mCurrentRotationState = 0;
-		// mShape = SHAPES[mId];
 		rotationStates = RotationStateList.values()[id].getRotationStates();
 		resetPos();
-		// print();
+		
+		leftHeldTimer.pause();
+		rightHeldTimer.pause();
 	}
 
 	void rotateClockwise(Matrix matrix) {
@@ -168,7 +170,7 @@ public class Tetromino {
 			Gdx.gl.glDisable(GL10.GL_BLEND);
 		}
 
-		// debugDraw(sr);
+		 debugDraw(sr);
 	}
 
 	// TODO fix debug draw and check with origin finder to see if it works
@@ -185,12 +187,12 @@ public class Tetromino {
 		// TODO flip shape here for SRS
 		int[][] original = rotationStates[mCurrentRotationState];
 		int[][] flipped = new int[original.length][original[0].length];
-		for (int i = 0; i < original.length; i++) {
-			for (int j = 0; j < flipped.length; j++) {
+		for (int i = 0; i < flipped.length; i++) {
+			for (int j = 0; j < flipped[0].length; j++) {
 				flipped[flipped.length-i-1][j] = original[i][j];
 			}
 		}
-		return rotationStates[mCurrentRotationState];
+		return flipped;
 	}
 
 	// TODO fix origin finding code
@@ -218,7 +220,6 @@ public class Tetromino {
 		return origin;
 	}
 
-	// TODO fix tetrominos diapering when on far right
 	void addToMatrix(Matrix matrix) {
 		int[][] shape = getShape();
 		for (int i = 0; i < shape.length; i++) {
@@ -233,18 +234,45 @@ public class Tetromino {
 		done = true;
 	}
 	
-	void update(Matrix matrix){
-		if (isRightHeld()
-				&& matrix.isValid(this, Tetromino.RIGHT)) {
-			move(Tetromino.RIGHT);
-		} else if (isLeftHeld()
-				&& matrix.isValid(this, Tetromino.LEFT)) {
+	void update(Matrix matrix,float delta){
+		
+		leftHeldTimer.tick(delta);
+		rightHeldTimer.tick(delta);
+		
+		if(leftHeldTimer.isFinished() && matrix.isValid(this, Tetromino.LEFT) ){
 			move(Tetromino.LEFT);
 		}
+		if(rightHeldTimer.isFinished() && matrix.isValid(this, Tetromino.RIGHT) ){
+			move(Tetromino.RIGHT);
+		}
+		
+		if(leftHeld){
+			if(matrix.isValid(this, Tetromino.LEFT) && !leftJustTapped){
+				move(Tetromino.LEFT);
+			}
+			leftJustTapped = true;
+		}
+		if(rightHeld){
+			if(matrix.isValid(this, Tetromino.RIGHT) && !leftJustTapped) {
+				move(Tetromino.RIGHT);
+			}
+			leftJustTapped = true;
+		}
+		
 		if(downHeld && matrix.isValid(this, DOWN)){
 			move(DOWN);
 		}
 	}
+	//TODO this stuff
+	void onLeftPressed(){
+		leftHeld = true;
+		leftJustTapped = false;
+	}
+	void onRightPressed(){
+		leftHeld = true;
+		leftJustTapped = false;
+	}
+
 
 	// ------------------------------------------------------------------------
 
@@ -288,65 +316,6 @@ public class Tetromino {
 		this.mCurrentRotationState = currentRotationState;
 	}
 
-	// ------------------
-	public InputProcessor INPUT_PROCESSOR = new InputProcessor() {
-		@Override
-		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean touchDragged(int screenX, int screenY, int pointer) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean touchDown(int screenX, int screenY, int pointer,
-				int button) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean scrolled(int amount) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean mouseMoved(int screenX, int screenY) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean keyUp(int keycode) {
-			/*
-			
-			*/
-			return false;
-		}
-
-		@Override
-		public boolean keyTyped(char character) {
-
-			return false;
-		}
-
-		@Override
-		public boolean keyDown(int keycode) {
-			
-			
-			
-			return false;
-		}
-	};
-	public InputProcessor getINPUT_PROCESSOR() {
-		return INPUT_PROCESSOR;
-	}
-
 	public boolean isRightHeld() {
 		return rightHeld;
 	}
@@ -370,5 +339,19 @@ public class Tetromino {
 	public void setDownHeld(boolean downHeld){
 		this.downHeld = downHeld;
 	}
+	
+	public Timer getLeftHeldTimer() {
+		return leftHeldTimer;
+	}
+	public Timer getRightHeldTimer() {
+		return rightHeldTimer;
+	}
 
+	public void startLeftHeldTimer() {
+		leftHeldTimer.start();	
+	}
+
+	public void startRightHeldTimer() {
+		rightHeldTimer.start();
+	}
 }
