@@ -8,5 +8,5 @@ public class Dimens {
 	
 	public static final int DESKTOP_HEIGHT = 800;
 	public static final int DESKTOP_WIDTH = 480;
-	public static final int DESKTOP_MARGIN = 20;
+	public static final int DESKTOP_MARGIN = 100;
 }

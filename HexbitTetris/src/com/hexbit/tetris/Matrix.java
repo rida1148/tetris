@@ -99,9 +99,6 @@ public class Matrix {
 		}
 		return false;
 	}
-	
-	//TODO look into how line clears + gravity works
-	//FIXME line clearing
 	void checkClears(ShapeRenderer sr){
 		//find all lines that are full
 		ArrayList<Integer> fullLines = new ArrayList<Integer>();
@@ -145,5 +142,3 @@ public class Matrix {
 		matrix[pos.y][pos.x] = num;
 	}
 }
-
-//added one tap tetromino move

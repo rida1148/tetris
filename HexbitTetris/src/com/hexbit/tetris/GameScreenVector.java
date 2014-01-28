@@ -1,6 +1,9 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.*;
+import static com.hexbit.tetris.Dimens.CELL;
+import static com.hexbit.tetris.Dimens.DESKTOP_MARGIN;
+import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
+import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -10,7 +13,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 
 //TODO make tetris game class so that all you change is
 //the rendering for different versions
@@ -24,7 +26,7 @@ public class GameScreenVector implements Screen, InputProcessor {
 	Matrix matrix;
 	TetrominoStack tetrominoStack = new TetrominoStack();
 	Tetromino currentTetromino;
-	
+
 	Timer gameTimer = new Timer(PLAY_SPEED);
 
 	// graphics
@@ -56,14 +58,16 @@ public class GameScreenVector implements Screen, InputProcessor {
 		tetrominoStack = new TetrominoStack();
 		currentTetromino = tetrominoStack.getNextPiece();
 		matrix = new Matrix();
-		
-		
+
 	}
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		shapeRenderer.translate(DESKTOP_MARGIN, DESKTOP_MARGIN, 0);
+		spriteBatch.getProjectionMatrix().translate(DESKTOP_MARGIN, DESKTOP_MARGIN, 0);
+
 		if (gameTimer.isFinished()) {
 			if (matrix.isValid(currentTetromino, Tetromino.DOWN)) {
 				currentTetromino.move(Tetromino.DOWN);
@@ -85,29 +89,30 @@ public class GameScreenVector implements Screen, InputProcessor {
 			currentTetromino = tetrominoStack.getNextPiece();
 		}
 
-		currentTetromino.update(matrix,delta);
+		currentTetromino.update(matrix, delta);
 
 		// render -------------------------------
 
-	//	shapeRenderer.translate(DESKTOP_MARGIN, DESKTOP_MARGIN,0);
 		matrix.draw(shapeRenderer);
 		currentTetromino.draw(shapeRenderer, matrix);
-		tetrominoStack.peekNextPiece().draw(shapeRenderer,new Point(GRID_WIDTH, GRID_HEIGHT-2));
-		//shapeRenderer.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
+		tetrominoStack.peekNextPiece().draw(shapeRenderer,
+				new Point(GRID_WIDTH, GRID_HEIGHT - 2));
 
+		
 		spriteBatch.begin();
-		font.draw(spriteBatch, "NEXT", GRID_WIDTH*CELL, GRID_HEIGHT*CELL);
-		text("FPS: " + Gdx.graphics.getFramesPerSecond(),
-				currentTetromino.getOrigin().toString(),
-				currentTetromino.getRightHeldTimer().getCurrentTime()+"",
-				currentTetromino.getLeftHeldTimer().getCurrentTime()+"");
+		font.draw(spriteBatch, "NEXT", GRID_WIDTH * CELL, GRID_HEIGHT * CELL);
+		text("FPS: " + Gdx.graphics.getFramesPerSecond(), currentTetromino
+				.getOrigin().toString());
 		spriteBatch.end();
+		
+		shapeRenderer.translate(-DESKTOP_MARGIN, -DESKTOP_MARGIN, 0);
+		spriteBatch.getProjectionMatrix().translate(-DESKTOP_MARGIN, -DESKTOP_MARGIN, 0);
 	}
-	
-	void text(String...strings){
-		for(int i = 0 ; i < strings.length; i++){
-			font.draw(spriteBatch, strings[i], 0,
-					Gdx.graphics.getHeight() - (font.getCapHeight()*(i+1)));
+
+	void text(String... strings) {
+		for (int i = 0; i < strings.length; i++) {
+			font.draw(spriteBatch, strings[i], 0, Gdx.graphics.getHeight()
+					- (font.getCapHeight() * (i + 1)));
 		}
 	}
 
@@ -151,38 +156,41 @@ public class GameScreenVector implements Screen, InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		return false;
 	}
+
 	boolean leftAllowed = false;
 	boolean madeLeftMove = false;
-	
+
 	boolean rightAllowed = false;
 	boolean madeRightMove = false;
+
 	@Override
-	public boolean keyDown(int keycode) {	
-		//freaky boolean logic!
+	public boolean keyDown(int keycode) {
+		// freaky boolean logic!
 		if (keycode == Keys.LEFT) {
 			currentTetromino.startLeftHeldTimer();
-			if(!madeLeftMove){
+			if (!madeLeftMove) {
 				leftAllowed = true;
 			}
-			if(matrix.isValid(currentTetromino, Tetromino.LEFT) && leftAllowed && !madeLeftMove){
+			if (matrix.isValid(currentTetromino, Tetromino.LEFT) && leftAllowed
+					&& !madeLeftMove) {
 				currentTetromino.move(Tetromino.LEFT);
 				leftAllowed = false;
 				madeLeftMove = true;
 			}
 		} else if (keycode == Keys.RIGHT) {
 			currentTetromino.startRightHeldTimer();
-			if(!madeRightMove){
+			if (!madeRightMove) {
 				rightAllowed = true;
 			}
-			if(matrix.isValid(currentTetromino, Tetromino.RIGHT) && rightAllowed && !madeRightMove){
+			if (matrix.isValid(currentTetromino, Tetromino.RIGHT)
+					&& rightAllowed && !madeRightMove) {
 				currentTetromino.move(Tetromino.RIGHT);
 				rightAllowed = false;
 				madeRightMove = true;
 			}
-		}else if (keycode == Keys.SPACE) {
+		} else if (keycode == Keys.SPACE) {
 			currentTetromino.hardDrop(matrix);
-		}
-		else if (keycode == Keys.UP) {
+		} else if (keycode == Keys.UP) {
 			currentTetromino.rotateClockwise(matrix);
 		} else if (keycode == Keys.DOWN) {
 			currentTetromino.setDownHeld(true);

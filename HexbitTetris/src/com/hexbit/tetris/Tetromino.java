@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 // have this extend it
 
 public class Tetromino {
-	final float KEY_HOLD_DELAY = 0.08f;
+	final float KEY_HOLD_DELAY = 0.3f;
 	final float GHOST_ALPHA = 0.2f;
 	
 	private int mId;
@@ -58,8 +58,8 @@ public class Tetromino {
 	}
 
 	void resetPos() {
-	//	mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-1 );
 		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3);
+	//	mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3) ;
 	}
 
 	public Tetromino(int id) {
@@ -182,7 +182,7 @@ public class Tetromino {
 			Gdx.gl.glDisable(GL10.GL_BLEND);
 		}
 
-		 debugDraw(sr);
+		// debugDraw(sr);
 	}
 	
 	void debugDraw(ShapeRenderer sr) {
@@ -198,7 +198,6 @@ public class Tetromino {
 		return rotationStates[mCurrentRotationState];
 	}
 
-	// TODO fix origin finding code
 	Point getOrigin() {
 		Point origin = new Point(-1, -1);
 		int[][] shape = getShape();
@@ -220,7 +219,8 @@ public class Tetromino {
 		origin.y = shape.length - origin.y - 1; // -1 because .length counts
 												// starting at 1
 
-		return origin;
+		//return origin;
+		return new Point(0,0);
 	}
 
 	void addToMatrix(Matrix matrix) {
