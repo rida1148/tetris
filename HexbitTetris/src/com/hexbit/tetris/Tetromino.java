@@ -32,11 +32,6 @@ public class Tetromino {
 	Timer leftHeldTimer = new Timer(KEY_HOLD_DELAY);
 	Timer rightHeldTimer = new Timer(KEY_HOLD_DELAY);
 	
-	private boolean leftHeld;
-	private boolean rightHeld;
-	private boolean leftJustTapped = false;
-	private boolean rightJustTapped = false;
-	
 	private boolean downHeld;
 
 	public static final Point DOWN = new Point(0, -1);
@@ -133,6 +128,23 @@ public class Tetromino {
 			System.out.println();
 		}
 	}
+	
+	public void draw(ShapeRenderer sr,Point pos) {
+		int[][] shape = getShape();
+		sr.setColor(mColor);
+		sr.begin(ShapeType.Filled);
+		for (int i = shape.length - 1; i >= 0; i--) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if (shape[i][j] != 0) {
+					int x = pos.x - getOrigin().x + j;
+					int y = pos.y - getOrigin().y + i;
+					sr.rect(x * Dimens.CELL, y * Dimens.CELL, Dimens.CELL,
+							Dimens.CELL);
+				}
+			}
+		}
+		sr.end();
+	}
 
 	public void draw(ShapeRenderer sr, Matrix matrix) {
 		int[][] shape = getShape();
@@ -172,8 +184,7 @@ public class Tetromino {
 
 		 debugDraw(sr);
 	}
-
-	// TODO fix debug draw and check with origin finder to see if it works
+	
 	void debugDraw(ShapeRenderer sr) {
 		int[][] shape = getShape();
 		sr.begin(ShapeType.Line);
@@ -184,15 +195,7 @@ public class Tetromino {
 	}
 
 	int[][] getShape() {
-		// TODO flip shape here for SRS
-		int[][] original = rotationStates[mCurrentRotationState];
-		int[][] flipped = new int[original.length][original[0].length];
-		for (int i = 0; i < flipped.length; i++) {
-			for (int j = 0; j < flipped[0].length; j++) {
-				flipped[flipped.length-i-1][j] = original[i][j];
-			}
-		}
-		return flipped;
+		return rotationStates[mCurrentRotationState];
 	}
 
 	// TODO fix origin finding code
@@ -246,31 +249,22 @@ public class Tetromino {
 			move(Tetromino.RIGHT);
 		}
 		
-		if(leftHeld){
-			if(matrix.isValid(this, Tetromino.LEFT) && !leftJustTapped){
-				move(Tetromino.LEFT);
-			}
-			leftJustTapped = true;
-		}
-		if(rightHeld){
-			if(matrix.isValid(this, Tetromino.RIGHT) && !leftJustTapped) {
-				move(Tetromino.RIGHT);
-			}
-			leftJustTapped = true;
-		}
-		
+//		if(leftHeld){
+//			if(matrix.isValid(this, Tetromino.LEFT) && !leftJustTapped){
+//				move(Tetromino.LEFT);
+//			}
+//			leftJustTapped = true;
+//		}
+//		if(rightHeld){
+//			if(matrix.isValid(this, Tetromino.RIGHT) && !leftJustTapped) {
+//				move(Tetromino.RIGHT);
+//			}
+//			leftJustTapped = true;
+//		}
+//		
 		if(downHeld && matrix.isValid(this, DOWN)){
 			move(DOWN);
 		}
-	}
-	//TODO this stuff
-	void onLeftPressed(){
-		leftHeld = true;
-		leftJustTapped = false;
-	}
-	void onRightPressed(){
-		leftHeld = true;
-		leftJustTapped = false;
 	}
 
 
@@ -314,22 +308,6 @@ public class Tetromino {
 
 	public void setCurrentRotationState(int currentRotationState) {
 		this.mCurrentRotationState = currentRotationState;
-	}
-
-	public boolean isRightHeld() {
-		return rightHeld;
-	}
-
-	public void setRightHeld(boolean rightHeld) {
-		this.rightHeld = rightHeld;
-	}
-
-	public boolean isLeftHeld() {
-		return leftHeld;
-	}
-
-	public void setLeftHeld(boolean leftHeld) {
-		this.leftHeld = leftHeld;
 	}
 	
 	public boolean isDownHeld() {

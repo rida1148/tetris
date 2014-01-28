@@ -1,6 +1,8 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.*;
+import static com.hexbit.tetris.Dimens.CELL;
+import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
+import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import java.util.ArrayList;
 
@@ -103,7 +105,7 @@ public class Matrix {
 	void checkClears(ShapeRenderer sr){
 		//find all lines that are full
 		ArrayList<Integer> fullLines = new ArrayList<Integer>();
-		for(int i = 0 ; i < matrix.length; i ++){
+		for(int i = matrix.length-1 ; i >= 0; i --){
 			boolean isFull = true;
 			for (int j = 0; j < matrix[0].length; j++) {
 				if(matrix[i][j] == 0){
@@ -121,24 +123,33 @@ public class Matrix {
 			}
 		}
 		draw(sr);
+		
 		for (int i = 0; i < fullLines.size(); i++) {
-			sqeeze(fullLines.get(i)+1, fullLines.get(i));
+			sqeeze(fullLines.get(i));
 			System.out.println("cleared @ "+fullLines.get(i));
 		}
 		//starting from the top, see if they are next to each other
 		//for optimise and squeeze those groups as one
 
 	}
-	void sqeeze(int fromY,int toY){
-		//TODO clear space then redraw for effect
-		for (int y = toY; y < matrix.length-1; y++) {
-			for(int i = 0 ; i < matrix[0].length; i++){
-				matrix[y][i] = matrix[y+1][i];
-			}
+	//FIXME line clearing
+	void sqeeze(int toY){
+		//starting from the top of the grid
+		for (int y = matrix.length-2; y >= toY; y--) {
+			//copy bigger one down
+			shiftDownTo(y);
 		}
+	}
+	void shiftDownTo(int startY){
+		for(int i = 0 ; i < matrix[0].length; i++){
+			matrix[startY][i] = matrix[startY+1][i];
+		}
+		
 	}
 	
 	void setCell(Point pos,int num){
 		matrix[pos.y][pos.x] = num;
 	}
 }
+
+//added one tap tetromino move

@@ -3,6 +3,7 @@ package com.hexbit.tetris;
 //list of all rotation states for each piece
 
 public enum RotationStateList {
+	//TODO rotate all theses
 		I(new int[][][]{
 		{
 			{0,0,0,0},

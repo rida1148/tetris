@@ -1,14 +1,16 @@
 package com.hexbit.tetris;
 
+import static com.hexbit.tetris.Dimens.*;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
 
 //TODO make tetris game class so that all you change is
 //the rendering for different versions
@@ -87,12 +89,14 @@ public class GameScreenVector implements Screen, InputProcessor {
 
 		// render -------------------------------
 
-		// sr.translate(DESKTOP_MARGIN, DESKTOP_MARGIN,0);
+	//	shapeRenderer.translate(DESKTOP_MARGIN, DESKTOP_MARGIN,0);
 		matrix.draw(shapeRenderer);
 		currentTetromino.draw(shapeRenderer, matrix);
-		// sr.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
+		tetrominoStack.peekNextPiece().draw(shapeRenderer,new Point(GRID_WIDTH, GRID_HEIGHT-2));
+		//shapeRenderer.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
 
 		spriteBatch.begin();
+		font.draw(spriteBatch, "NEXT", GRID_WIDTH*CELL, GRID_HEIGHT*CELL);
 		text("FPS: " + Gdx.graphics.getFramesPerSecond(),
 				currentTetromino.getOrigin().toString(),
 				currentTetromino.getRightHeldTimer().getCurrentTime()+"",
@@ -147,21 +151,38 @@ public class GameScreenVector implements Screen, InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		return false;
 	}
+	boolean leftAllowed = false;
+	boolean madeLeftMove = false;
 	
+	boolean rightAllowed = false;
+	boolean madeRightMove = false;
 	@Override
 	public boolean keyDown(int keycode) {	
-		
+		//freaky boolean logic!
 		if (keycode == Keys.LEFT) {
-			currentTetromino.setLeftHeld(true);
 			currentTetromino.startLeftHeldTimer();
+			if(!madeLeftMove){
+				leftAllowed = true;
+			}
+			if(matrix.isValid(currentTetromino, Tetromino.LEFT) && leftAllowed && !madeLeftMove){
+				currentTetromino.move(Tetromino.LEFT);
+				leftAllowed = false;
+				madeLeftMove = true;
+			}
 		} else if (keycode == Keys.RIGHT) {
-			currentTetromino.setRightHeld(true);
 			currentTetromino.startRightHeldTimer();
-		}
-		if (keycode == Keys.SPACE) {
+			if(!madeRightMove){
+				rightAllowed = true;
+			}
+			if(matrix.isValid(currentTetromino, Tetromino.RIGHT) && rightAllowed && !madeRightMove){
+				currentTetromino.move(Tetromino.RIGHT);
+				rightAllowed = false;
+				madeRightMove = true;
+			}
+		}else if (keycode == Keys.SPACE) {
 			currentTetromino.hardDrop(matrix);
 		}
-		if (keycode == Keys.UP) {
+		else if (keycode == Keys.UP) {
 			currentTetromino.rotateClockwise(matrix);
 		} else if (keycode == Keys.DOWN) {
 			currentTetromino.setDownHeld(true);
@@ -171,18 +192,16 @@ public class GameScreenVector implements Screen, InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		
-		
 		if (Keys.DOWN == keycode) {
 			currentTetromino.setDownHeld(false);
 		} else if (keycode == Keys.LEFT) {
-			currentTetromino.setLeftHeld(false);
 			currentTetromino.getLeftHeldTimer().reset();
 			currentTetromino.getLeftHeldTimer().pause();
+			madeLeftMove = false;
 		} else if (keycode == Keys.RIGHT) {
-			currentTetromino.setRightHeld(false);
 			currentTetromino.getRightHeldTimer().reset();
 			currentTetromino.getRightHeldTimer().pause();
+			madeRightMove = false;
 		}
 		// ---------
 		else if (Keys.C == keycode) {

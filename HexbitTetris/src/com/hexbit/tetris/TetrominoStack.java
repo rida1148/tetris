@@ -20,6 +20,9 @@ public class TetrominoStack {
 		
 		return tmp;
 	}
+	Tetromino peekNextPiece(){
+		return stack[stack.length-1];
+	}
 	
 	Tetromino getHeld(){
 		return held;
