@@ -125,26 +125,20 @@ public class Matrix {
 		draw(sr);
 		
 		for (int i = 0; i < fullLines.size(); i++) {
-			sqeeze(fullLines.get(i));
+			for (int y = fullLines.get(i); y < matrix.length-1; y++) {
+ 
+				shiftGridDownTo(y);
+			}
 			System.out.println("cleared @ "+fullLines.get(i));
 		}
 		//starting from the top, see if they are next to each other
 		//for optimise and squeeze those groups as one
 
 	}
-	//FIXME line clearing
-	void sqeeze(int toY){
-		//starting from the top of the grid
-		for (int y = matrix.length-2; y >= toY; y--) {
-			//copy bigger one down
-			shiftDownTo(y);
-		}
-	}
-	void shiftDownTo(int startY){
+	void shiftGridDownTo(int overwritePos){
 		for(int i = 0 ; i < matrix[0].length; i++){
-			matrix[startY][i] = matrix[startY+1][i];
+			matrix[overwritePos][i] = matrix[overwritePos+1][i];
 		}
-		
 	}
 	
 	void setCell(Point pos,int num){
