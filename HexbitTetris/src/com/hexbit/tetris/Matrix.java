@@ -6,15 +6,29 @@ import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class Matrix {
+	
 	int[][] matrix = new int[GRID_HEIGHT][GRID_WIDTH];
 	
-	public Matrix() {
-	//	debugLoad();
+	Texture[] mCellTextures = new Texture[7];
+	
+	public Matrix(Texture[] cellTextures) {
+		for (int i = 0; i < cellTextures.length; i++) {
+			mCellTextures[i] = cellTextures[i];
+		}
+	}
+	
+	public Matrix(){
+		for (int i = 0; i < mCellTextures.length; i++) {
+			mCellTextures[i] = new Texture(Gdx.files.internal("green.png"));
+		}
 	}
 	
 	void debugLoad(){
@@ -27,7 +41,7 @@ public class Matrix {
 		}
 	}
 	
-	boolean isValid(final Tetromino t){
+	public boolean isValid(final Tetromino t){
 		final int[][] shape = t.getShape();
 		Point origin = t.getOrigin();
 		Point pos = t.getPos();
@@ -54,7 +68,7 @@ public class Matrix {
 		return true;
 	}
 	
-	boolean isValid(Tetromino tetromino,Point move){
+	public boolean isValid(Tetromino tetromino,Point move){
 		Point cPos = tetromino.getPos();
 		Tetromino tmp = new Tetromino(tetromino.getId());
 		tmp.setCurrentRotationState(tetromino.getCurrentRotationState());
@@ -89,7 +103,35 @@ public class Matrix {
 		sr.end();
 	}
 	
-	boolean isGameOver(){
+	public void draw(SpriteBatch sb) {
+
+		sb.begin();
+		//TODO draw grid here
+		
+//		//horizontal
+//		for (int y = 0; y < Dimens.GRID_HEIGHT; y++) {
+//			sr.line(0, CELL*y ,CELL*GRID_WIDTH, CELL*y);
+//		}
+//		//Vertical
+//		for (int x = 0; x < Dimens.GRID_WIDTH; x++) {
+//			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
+//		}
+		
+		
+		for (int y = 0; y < matrix.length; y++) {
+			for (int x = 0; x < matrix[y].length; x++) {
+				if(matrix[y][x] != 0){				
+					sb.draw(mCellTextures[matrix[y][x]-1], x*CELL, y*CELL,CELL, CELL);
+				}
+			}
+		}
+		
+		
+		sb.end();
+
+	}
+	
+	public boolean isGameOver(){
 		for (int i = 1; i < 3; i++) {
 			for(int j = 0; j < matrix[0].length; j++){
 				if(matrix[GRID_HEIGHT-i][j] != 0){
@@ -99,7 +141,7 @@ public class Matrix {
 		}
 		return false;
 	}
-	void checkClears(ShapeRenderer sr){
+	public void checkClears(){
 		//find all lines that are full
 		ArrayList<Integer> fullLines = new ArrayList<Integer>();
 		for(int i = matrix.length-1 ; i >= 0; i --){
@@ -119,7 +161,7 @@ public class Matrix {
 				matrix[fullLines.get(i)][j] = 0;
 			}
 		}
-		draw(sr);
+		//draw(sr);
 		
 		for (int i = 0; i < fullLines.size(); i++) {
 			for (int y = fullLines.get(i); y < matrix.length-1; y++) {
@@ -138,7 +180,14 @@ public class Matrix {
 		}
 	}
 	
-	void setCell(Point pos,int num){
+	public void setCell(Point pos,int num){
 		matrix[pos.y][pos.x] = num;
+	}
+	
+	public void dispose() {
+		for (int i = 0; i < mCellTextures.length; i++) {
+			mCellTextures[i].dispose();
+		}
+
 	}
 }

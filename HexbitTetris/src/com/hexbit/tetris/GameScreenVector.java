@@ -14,8 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-//TODO make tetris game class so that all you change is
-//the rendering for different versions
+//old (obsolete) original class before TetrisScreen was made 
 
 public class GameScreenVector implements Screen, InputProcessor {
 	// constants
@@ -79,13 +78,13 @@ public class GameScreenVector implements Screen, InputProcessor {
 		}
 		gameTimer.tick(delta);
 
-		matrix.checkClears(shapeRenderer);
+		matrix.checkClears();
 
 		if (matrix.isGameOver()) {
 			reset();
 		}
 
-		if (currentTetromino.done) {
+		if (currentTetromino.isDone()) {
 			currentTetromino = tetrominoStack.getNextPiece();
 		}
 

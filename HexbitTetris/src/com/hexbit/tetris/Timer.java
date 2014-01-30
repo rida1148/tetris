@@ -8,7 +8,7 @@ public class Timer {
 	
 	private boolean enabled = true;
 	
-	Timer(float finishtime){
+	public Timer(float finishtime){
 		mFinishTime = finishtime;
 	}
 	
@@ -18,25 +18,25 @@ public class Timer {
 		}	
 	}
 	
-	boolean isFinished(){
+	public boolean isFinished(){
 		if(mCurrentTime >= mFinishTime){
 			return true;
 		}
 		return false;
 	}
 	
-	void reset(){
+	public void reset(){
 		mCurrentTime = 0;
 	}
 	
-	void pause(){
+	public void pause(){
 		enabled = false;
 	}
-	void start(){
+	public void start(){
 		enabled = true;
 	}
 	
-	float getCurrentTime(){
+	public float getCurrentTime(){
 		return mCurrentTime;
 	}
 	

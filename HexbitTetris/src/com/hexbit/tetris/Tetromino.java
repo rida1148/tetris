@@ -7,6 +7,8 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -14,7 +16,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 // TODO (optimise) make tetromino raw class for only data then
 // have this extend it
 
-public class Tetromino {
+public abstract class Tetromino {
+	
 	final float KEY_HOLD_DELAY = 0.3f;
 	final float GHOST_ALPHA = 0.2f;
 	
@@ -24,7 +27,7 @@ public class Tetromino {
 	private int[][][] rotationStates;
 	private int mCurrentRotationState;
 	private Point mPos = new Point(0, 0);
-	boolean done = false;
+	private boolean done = false;
 
 	public static Random random = new Random();
 	static final boolean ghost = true;
@@ -33,6 +36,7 @@ public class Tetromino {
 	Timer rightHeldTimer = new Timer(KEY_HOLD_DELAY);
 	
 	private boolean downHeld;
+	private Texture mCellTexture;
 
 	public static final Point DOWN = new Point(0, -1);
 	public static final Point LEFT = new Point(-1, 0);
@@ -57,7 +61,7 @@ public class Tetromino {
 		// this(2);
 	}
 
-	void resetPos() {
+	public void resetPos() {
 		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3);
 	//	mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3) ;
 	}
@@ -74,8 +78,15 @@ public class Tetromino {
 		leftHeldTimer.pause();
 		rightHeldTimer.pause();
 	}
+	
+	//for image grathics
+	public Tetromino(int id,Texture cellTexture) {
+		this(id);
+		mCellTexture = cellTexture;
+		
+	}
 
-	void rotateClockwise(Matrix matrix) {
+	public void rotateClockwise(Matrix matrix) {
 		int nextState = mCurrentRotationState;
 		if (rotationStates.length > 0) {
 			if (mCurrentRotationState < rotationStates.length - 1) {
@@ -99,12 +110,12 @@ public class Tetromino {
 		mPos.y += move.y;
 	}
 
-	void hardDrop(Matrix matrix) {
+	public void hardDrop(Matrix matrix) {
 		mPos = getHardDropPos(matrix);
 		addToMatrix(matrix);
 	}
 
-	Point getHardDropPos(Matrix matrix) {
+	public Point getHardDropPos(Matrix matrix) {
 		Point movement = new Point(0, 0);
 		while (matrix.isValid(this, movement)) {
 			movement.y--;
@@ -145,6 +156,8 @@ public class Tetromino {
 		}
 		sr.end();
 	}
+	
+	
 
 	public void draw(ShapeRenderer sr, Matrix matrix) {
 		int[][] shape = getShape();
@@ -184,6 +197,61 @@ public class Tetromino {
 
 		// debugDraw(sr);
 	}
+	//image graphics mode
+	public void draw(SpriteBatch sb, Matrix matrix) {
+		int[][] shape = getShape();
+		sb.begin();
+		for (int i = shape.length - 1; i >= 0; i--) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if (shape[i][j] != 0) {
+					int x = mPos.x - getOrigin().x + j;
+					int y = mPos.y - getOrigin().y + i;
+					sb.draw(mCellTexture,x * CELL, y * CELL, CELL,
+							CELL);
+				}
+			}
+		}
+		sb.end();
+		if (ghost) {
+			Gdx.gl.glEnable(GL10.GL_BLEND);
+			Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+			//sb.
+			sb.begin();
+			Point pos = getHardDropPos(matrix);
+			//TODO set alpha
+			for (int i = 0; i < shape.length; i++) {
+				for (int j = 0; j < shape[i].length; j++) {
+					if (shape[i][j] != 0) {
+						int x = pos.x - getOrigin().x + j;
+						int y = pos.y - getOrigin().y + i;
+					
+						sb.draw(mCellTexture,x * CELL, y * CELL, CELL,
+								CELL);
+					}
+				}
+			}
+			sb.end();
+			Gdx.gl.glDisable(GL10.GL_BLEND);
+		}
+
+		// debugDraw(sr);
+	}
+	
+	public void draw(SpriteBatch sb,Point pos) {
+		int[][] shape = getShape();
+		sb.begin();
+		for (int i = shape.length - 1; i >= 0; i--) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if (shape[i][j] != 0) {
+					int x = pos.x - getOrigin().x + j;
+					int y = pos.y - getOrigin().y + i;
+					sb.draw(mCellTexture,x * CELL, y * CELL, CELL,
+							CELL);
+				}
+			}
+		}
+		sb.end();
+	}
 	
 	void debugDraw(ShapeRenderer sr) {
 		int[][] shape = getShape();
@@ -194,11 +262,11 @@ public class Tetromino {
 		sr.end();
 	}
 
-	int[][] getShape() {
+	public int[][] getShape() {
 		return rotationStates[mCurrentRotationState];
 	}
 
-	Point getOrigin() {
+	public Point getOrigin() {
 		Point origin = new Point(-1, -1);
 		int[][] shape = getShape();
 
@@ -223,7 +291,7 @@ public class Tetromino {
 		return new Point(0,0);
 	}
 
-	void addToMatrix(Matrix matrix) {
+	public void addToMatrix(Matrix matrix) {
 		int[][] shape = getShape();
 		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[i].length; j++) {
@@ -234,10 +302,10 @@ public class Tetromino {
 				}
 			}
 		}
-		done = true;
+		setDone(true);
 	}
 	
-	void update(Matrix matrix,float delta){
+	public void update(Matrix matrix,float delta){
 		
 		leftHeldTimer.tick(delta);
 		rightHeldTimer.tick(delta);
@@ -266,9 +334,12 @@ public class Tetromino {
 			move(DOWN);
 		}
 	}
-
-
 	// ------------------------------------------------------------------------
+	
+	public void dispose() {
+		mCellTexture.dispose();
+
+	}
 
 	Point getPos() {
 		return mPos;
@@ -331,5 +402,13 @@ public class Tetromino {
 
 	public void startRightHeldTimer() {
 		rightHeldTimer.start();
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 }
