@@ -11,16 +11,19 @@ import com.hexbit.tetris.Point;
 import com.hexbit.tetris.Tetromino;
 
 public class TetrominoGlow extends Tetromino {
+	
+	final float GHOST_ALPHA = 0.45f;
+	
 	private Texture mCellTexture;
 
 	// for image grathics
-	public TetrominoGlow(int id, Texture cellTexture) {
+	public TetrominoGlow(int id) {
 		super(id);
-		mCellTexture = cellTexture;
+		mCellTexture = new Texture(Gdx.files.internal("neon/"+id+".png"));
 	}
 
 	public TetrominoGlow() {
-		this(random.nextInt(7),new Texture(Gdx.files.internal("green.png")));
+		this(random.nextInt(7));
 	}
 
 	// image graphics mode
@@ -38,6 +41,8 @@ public class TetrominoGlow extends Tetromino {
 		if (ghost) {
 			Gdx.gl.glEnable(GL10.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+			com.badlogic.gdx.graphics.Color c = sb.getColor();
+            sb.setColor(c.r, c.g, c.b, GHOST_ALPHA);
 			Point pos = getHardDropPos(matrix);
 			// TODO set alpha
 			for (int i = 0; i < shape.length; i++) {
@@ -51,6 +56,7 @@ public class TetrominoGlow extends Tetromino {
 				}
 			}
 			Gdx.gl.glDisable(GL10.GL_BLEND);
+			 sb.setColor(c.r, c.g, c.b, 1f);
 		}
 	}
 

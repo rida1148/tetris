@@ -1,7 +1,6 @@
 package com.hexbit.tetris.glow;
 
-import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
-import static com.hexbit.tetris.Dimens.GRID_WIDTH;
+import static com.hexbit.tetris.Dimens.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
@@ -40,6 +39,7 @@ public class GlowScreen extends TetrisScreen {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		//spriteBatch.getProjectionMatrix().translate(DESKTOP_MARGIN,DESKTOP_MARGIN, 0);
+		//sr.translate(DESKTOP_MARGIN,DESKTOP_MARGIN, 0);
 
 //		if (gameTimer.isFinished()) {
 //			if (mMatrix.isValid(mCurrentTetromino.getShape(), Tetromino.DOWN)) {
@@ -82,7 +82,8 @@ public class GlowScreen extends TetrisScreen {
 		//text("FPS: " + Gdx.graphics.getFramesPerSecond());
 		spriteBatch.end();
 
-	//	spriteBatch.getProjectionMatrix().translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
+		//spriteBatch.getProjectionMatrix().translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
+		//sr.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
 
 	}
 

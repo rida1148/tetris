@@ -28,7 +28,7 @@ public class Matrix {
 	
 	public Matrix(){
 		for (int i = 0; i < mCellTextures.length; i++) {
-			mCellTextures[i] = new Texture(Gdx.files.internal("green.png"));
+			mCellTextures[i] = new Texture(Gdx.files.internal("neon/"+i+".png"));
 		}
 	}
 	
@@ -145,11 +145,11 @@ public class Matrix {
 		sr.setColor(Color.WHITE);
 		sr.begin(ShapeType.Line);
 		//horizontal
-		for (int y = 0; y < Dimens.GRID_HEIGHT; y++) {
+		for (int y = 0; y <= Dimens.GRID_HEIGHT; y++) {
 			sr.line(0, CELL*y ,CELL*GRID_WIDTH, CELL*y);
 		}
 		//Vertical
-		for (int x = 0; x < Dimens.GRID_WIDTH; x++) {
+		for (int x = 0; x <= Dimens.GRID_WIDTH; x++) {
 			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
 		}
 		
