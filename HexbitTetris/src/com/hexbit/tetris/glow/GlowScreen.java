@@ -1,7 +1,5 @@
 package com.hexbit.tetris.glow;
 
-import static com.hexbit.tetris.Dimens.CELL;
-import static com.hexbit.tetris.Dimens.DESKTOP_MARGIN;
 import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
 import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
@@ -14,73 +12,77 @@ import com.hexbit.tetris.Matrix;
 import com.hexbit.tetris.Point;
 import com.hexbit.tetris.TetrisScreen;
 import com.hexbit.tetris.Tetromino;
-import com.hexbit.tetris.TetrominoStack;
 
 public class GlowScreen extends TetrisScreen {
 
 	SpriteBatch spriteBatch;
-
 	BitmapFont font;
+	
+	//TODO delete shape renderer
+	ShapeRenderer sr;
 
 	@Override
 	public void load() {
 		spriteBatch = new SpriteBatch();
+		sr = new ShapeRenderer();
+		font = new BitmapFont(Gdx.files.internal("ubuntu.fnt"));
 	}
 	
-
 	@Override
 	public void resetGame() {
 		mMatrix = new Matrix();
-		mTetrominoStack = new TetrominoStack();
+		mTetrominoStack = new TetrominoStackGlow();
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
 	}
-	
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		spriteBatch.getProjectionMatrix().translate(DESKTOP_MARGIN,
-				DESKTOP_MARGIN, 0);
+		//spriteBatch.getProjectionMatrix().translate(DESKTOP_MARGIN,DESKTOP_MARGIN, 0);
 
-		if (gameTimer.isFinished()) {
-			if (mMatrix.isValid(mCurrentTetromino, Tetromino.DOWN)) {
-				mCurrentTetromino.move(Tetromino.DOWN);
-			} else {
-				mCurrentTetromino.addToMatrix(mMatrix);
-			}
+//		if (gameTimer.isFinished()) {
+//			if (mMatrix.isValid(mCurrentTetromino.getShape(), Tetromino.DOWN)) {
+//				mCurrentTetromino.move(Tetromino.DOWN);
+//			} else {
+//				mCurrentTetromino.addToMatrix(mMatrix);
+//			}
+//
+//			gameTimer.reset();
+//		}
+//		gameTimer.tick(delta);
+//
+//		mMatrix.checkClears();
+//
+//		if (mMatrix.isGameOver()) {
+//			resetGame();
+//		}
+//
+//		if (mCurrentTetromino.isDone()) {
+//			mCurrentTetromino = mTetrominoStack.getNextPiece();
+//		}
+//
+//		mCurrentTetromino.update(mMatrix, delta);
 
-			gameTimer.reset();
-		}
-		gameTimer.tick(delta);
-
-		mMatrix.checkClears();
-
-		if (mMatrix.isGameOver()) {
-			resetGame();
-		}
-
-		if (mCurrentTetromino.isDone()) {
-			mCurrentTetromino = mTetrominoStack.getNextPiece();
-		}
-
-		mCurrentTetromino.update(mMatrix, delta);
-
+		gameLogic(delta);
 		// render -------------------------------
-
+		
+		mMatrix.draw(sr);
+		
+		
+		spriteBatch.begin();
 		mMatrix.draw(spriteBatch);
-		mCurrentTetromino.draw(spriteBatch, mMatrix);
-		mTetrominoStack.peekNextPiece().draw(spriteBatch,
+		((TetrominoGlow) mCurrentTetromino).draw(spriteBatch, mMatrix);
+		((TetrominoGlow) mTetrominoStack.peekNextPiece()).draw(spriteBatch,
 				new Point(GRID_WIDTH, GRID_HEIGHT - 2));
 
-		spriteBatch.begin();
-		font.draw(spriteBatch, "NEXT", GRID_WIDTH * CELL, GRID_HEIGHT * CELL);
-		text("FPS: " + Gdx.graphics.getFramesPerSecond(), mCurrentTetromino
-				.getOrigin().toString());
+		
+		//font.draw(spriteBatch, "NEXT", GRID_WIDTH * CELL, GRID_HEIGHT * CELL);
+		
+		//text("FPS: " + Gdx.graphics.getFramesPerSecond());
 		spriteBatch.end();
 
-		spriteBatch.getProjectionMatrix().translate(-DESKTOP_MARGIN,
-				-DESKTOP_MARGIN, 0);
+	//	spriteBatch.getProjectionMatrix().translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
 
 	}
 
@@ -96,7 +98,8 @@ public class GlowScreen extends TetrisScreen {
 		spriteBatch.dispose();
 		font.dispose();
 		mMatrix.dispose();
-		mCurrentTetromino.dispose();
+		((TetrominoGlow) mCurrentTetromino).dispose();
+		((TetrominoStackGlow) mTetrominoStack).dispose();
 	}
 
 }

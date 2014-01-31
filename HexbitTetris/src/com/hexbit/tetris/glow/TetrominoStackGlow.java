@@ -9,5 +9,13 @@ public class TetrominoStackGlow extends TetrominoStack{
 	public Tetromino getNewTetromino() {
 		return new TetrominoGlow();
 	}
+	
+	public void dispose() {
+		for (int i = 0; i < stack.length; i++) {
+			((TetrominoGlow) stack[i]).dispose();
+		}
+		((TetrominoGlow) held).dispose();
+
+	}
 
 }

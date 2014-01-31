@@ -7,17 +7,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 
 public abstract class TetrisScreen implements Screen, InputProcessor {
-	// constants
-
 	protected final float PLAY_SPEED = 0.3f;
 
-	// game variables
 	protected Matrix mMatrix;
 	protected TetrominoStack mTetrominoStack;
 	protected Tetromino mCurrentTetromino;
 
 	protected Timer gameTimer = new Timer(PLAY_SPEED);
 	
+	abstract public void load();
+	
+	abstract public void resetGame();
 	
 	@Override
 	public void show() {
@@ -26,10 +26,30 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(this);
 	}
 	
-	abstract public void load();
+	protected void gameLogic(float delta){
+		if (gameTimer.isFinished()) {
+			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.DOWN)) {
+				mCurrentTetromino.move(Tetromino.DOWN);
+			} else {
+				mCurrentTetromino.addToMatrix(mMatrix);
+			}
 
-	// reset of game variables
-	abstract public void resetGame();
+			gameTimer.reset();
+		}
+		gameTimer.tick(delta);
+
+		mMatrix.checkClears();
+
+		if (mMatrix.isGameOver()) {
+			resetGame();
+		}
+
+		if (mCurrentTetromino.isDone()) {
+			mCurrentTetromino = mTetrominoStack.getNextPiece();
+		}
+
+		mCurrentTetromino.update(mMatrix, delta);
+	}
 
 	@Override
 	public void hide() {
@@ -86,7 +106,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			if (!madeLeftMove) {
 				leftAllowed = true;
 			}
-			if (mMatrix.isValid(mCurrentTetromino, Tetromino.LEFT) && leftAllowed
+			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.LEFT) && leftAllowed
 					&& !madeLeftMove) {
 				mCurrentTetromino.move(Tetromino.LEFT);
 				leftAllowed = false;
@@ -97,7 +117,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			if (!madeRightMove) {
 				rightAllowed = true;
 			}
-			if (mMatrix.isValid(mCurrentTetromino, Tetromino.RIGHT)
+			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.RIGHT)
 					&& rightAllowed && !madeRightMove) {
 				mCurrentTetromino.move(Tetromino.RIGHT);
 				rightAllowed = false;

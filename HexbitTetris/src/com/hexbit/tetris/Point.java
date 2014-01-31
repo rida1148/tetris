@@ -1,7 +1,8 @@
 package com.hexbit.tetris;
 
 public class Point {
-	int x,y;
+	public int x;
+	public int y;
 	
 	public Point(Point p){
 		x = p.x;

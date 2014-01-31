@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.hexbit.tetris.vector.TetrominoVector;
 
 public class Matrix {
 	
@@ -41,20 +42,53 @@ public class Matrix {
 		}
 	}
 	
+	boolean isValidOld(final Tetromino t){
+		final int[][] shape = t.getShape();
+		Point pos = t.getPos();
+
+		for (int i = 0; i < shape.length; i++) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if(shape[i][j] == 1){
+					int xPos = j+pos.x;
+
+					if(xPos < 0 || xPos >= GRID_WIDTH){
+						return false;
+					}
+					int yPos = i+pos.y;
+					if(yPos < 0 || yPos >= GRID_HEIGHT){
+						return false;
+					}
+					if(matrix[yPos][xPos] != 0){
+						return false;
+					}
+				}	
+			}
+		}
+
+		return true;
+	}
+
+	boolean isValidOld(Tetromino tetromino,Point move){
+		Point cPos = tetromino.getPos();
+		Tetromino tmp = new TetrominoVector(tetromino.getId());
+		tmp.setCurrentRotationState(tetromino.getCurrentRotationState());
+		tmp.setPos(new Point(cPos.x+move.x,cPos.y+move.y));
+		return isValidOld(tmp);
+	}
+	
 	public boolean isValid(final Tetromino t){
 		final int[][] shape = t.getShape();
-		Point origin = t.getOrigin();
 		Point pos = t.getPos();
 		
 		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[i].length; j++) {
 				if(shape[i][j] == 1){
-					int xPos = j+pos.x-origin.x;
+					int xPos = j+pos.x;
 					
 					if(xPos < 0 || xPos >= GRID_WIDTH){
 						return false;
 					}
-					int yPos = i+pos.y-origin.y;
+					int yPos = i+pos.y;
 					if(yPos < 0 || yPos >= GRID_HEIGHT){
 						return false;
 					}
@@ -68,16 +102,35 @@ public class Matrix {
 		return true;
 	}
 	
-	public boolean isValid(Tetromino tetromino,Point move){
-		Point cPos = tetromino.getPos();
-		Tetromino tmp = new Tetromino(tetromino.getId());
-		tmp.setCurrentRotationState(tetromino.getCurrentRotationState());
-		tmp.setPos(new Point(cPos.x+move.x,cPos.y+move.y));
-		return isValid(tmp);
+	public boolean isValid(int[][] shape,Point pos){
+		for (int i = 0; i < shape.length; i++) {
+			for (int j = 0; j < shape[i].length; j++) {
+				if(shape[i][j] == 1){
+					int xPos = j+pos.x;
+					
+					if(xPos < 0 || xPos >= GRID_WIDTH){
+						return false;
+					}
+					int yPos = i+pos.y;
+					if(yPos < 0 || yPos >= GRID_HEIGHT){
+						return false;
+					}
+					if(matrix[yPos][xPos] != 0){
+						return false;
+					}
+				}	
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean isValid(int[][] shape,Point cPos,Point move){
+		Point newPos = new Point(cPos.x+move.x,cPos.y+move.y);
+		return isValid(shape,newPos);
 	}
 	
 	public void draw(ShapeRenderer sr) {
-
 		sr.begin(ShapeType.Filled);
 		for (int y = 0; y < matrix.length; y++) {
 			for (int x = 0; x < matrix[y].length; x++) {
@@ -104,8 +157,6 @@ public class Matrix {
 	}
 	
 	public void draw(SpriteBatch sb) {
-
-		sb.begin();
 		//TODO draw grid here
 		
 //		//horizontal
@@ -117,7 +168,6 @@ public class Matrix {
 //			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
 //		}
 		
-		
 		for (int y = 0; y < matrix.length; y++) {
 			for (int x = 0; x < matrix[y].length; x++) {
 				if(matrix[y][x] != 0){				
@@ -125,9 +175,6 @@ public class Matrix {
 				}
 			}
 		}
-		
-		
-		sb.end();
 
 	}
 	

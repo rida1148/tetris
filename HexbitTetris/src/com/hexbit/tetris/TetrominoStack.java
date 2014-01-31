@@ -1,8 +1,8 @@
 package com.hexbit.tetris;
 
 public abstract class TetrominoStack {
-	Tetromino[] stack = new Tetromino[10];
-	Tetromino held = null;
+	protected Tetromino[] stack = new Tetromino[10];
+	protected Tetromino held = null;
 	
 	public abstract Tetromino getNewTetromino();
 	
@@ -32,12 +32,5 @@ public abstract class TetrominoStack {
 	public void setHeld(Tetromino h){
 		held = h;
 	}
-	
-	public void dispose() {
-		for (int i = 0; i < stack.length; i++) {
-			stack[i].dispose();
-		}
-		held.dispose();
 
-	}
 }

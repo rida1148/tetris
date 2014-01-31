@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.hexbit.tetris.glow.GlowScreen;
 import com.hexbit.tetris.vector.VectorScreen;
 
-public class TetrisGame extends Game {
+public class Tetris extends Game {
 
 	@Override
 	public void create() {

@@ -12,6 +12,6 @@ public class Main {
 		cfg.width = DESKTOP_WIDTH;
 		cfg.height = DESKTOP_HEIGHT;
 		
-		new LwjglApplication(new TetrisGame(), cfg);
+		new LwjglApplication(new Tetris(), cfg);
 	}
 }

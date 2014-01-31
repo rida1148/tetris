@@ -1,6 +1,6 @@
 package com.hexbit.tetris.client;
 
-import com.hexbit.tetris.TetrisGame;
+import com.hexbit.tetris.Tetris;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
@@ -14,6 +14,6 @@ public class GwtLauncher extends GwtApplication {
 
 	@Override
 	public ApplicationListener getApplicationListener () {
-		return new TetrisGame();
+		return new Tetris();
 	}
 }
