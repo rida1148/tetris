@@ -1,16 +1,8 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.CELL;
-
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.hexbit.tetris.vector.TetrominoVector;
 
 
@@ -19,7 +11,7 @@ import com.hexbit.tetris.vector.TetrominoVector;
 
 public abstract class Tetromino {
 	
-	final float KEY_HOLD_DELAY = 0.3f;
+	final float KEY_HOLD_DELAY = 0.2f;
 	
 	protected int mId;
 
@@ -185,7 +177,7 @@ public abstract class Tetromino {
 //			leftJustTapped = true;
 //		}
 //		
-		if(downHeld && matrix.isValid(getShape(), DOWN)){
+		if(downHeld && matrix.isValidOld(this, DOWN)){
 			move(DOWN);
 		}
 	}

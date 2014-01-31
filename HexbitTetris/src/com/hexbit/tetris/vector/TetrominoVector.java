@@ -36,8 +36,8 @@ public class TetrominoVector extends Tetromino{
 		for (int i = shape.length - 1; i >= 0; i--) {
 			for (int j = 0; j < shape[i].length; j++) {
 				if (shape[i][j] != 0) {
-					int x = pos.x - j;
-					int y = pos.y - i;
+					int x = pos.x + j;
+					int y = pos.y + i;
 					sr.rect(x * Dimens.CELL, y * Dimens.CELL, Dimens.CELL,
 							Dimens.CELL);
 				}
