@@ -21,9 +21,10 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	
 	@Override
 	public void show() {
+		Gdx.input.setInputProcessor(this);
 		load();
 		resetGame();
-		Gdx.input.setInputProcessor(this);
+		
 	}
 	
 	protected void gameLogic(float delta){

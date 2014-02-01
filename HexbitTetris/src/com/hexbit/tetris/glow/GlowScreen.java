@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Disposable;
 import com.hexbit.tetris.Matrix;
 import com.hexbit.tetris.Point;
 import com.hexbit.tetris.TetrisScreen;
@@ -29,7 +30,7 @@ public class GlowScreen extends TetrisScreen {
 	
 	@Override
 	public void resetGame() {
-		mMatrix = new Matrix();
+		mMatrix = new GlowMatrix();
 		mTetrominoStack = new TetrominoStackGlow();
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
 	}
@@ -38,40 +39,15 @@ public class GlowScreen extends TetrisScreen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		//spriteBatch.getProjectionMatrix().translate(DESKTOP_MARGIN,DESKTOP_MARGIN, 0);
-		//sr.translate(DESKTOP_MARGIN,DESKTOP_MARGIN, 0);
-
-//		if (gameTimer.isFinished()) {
-//			if (mMatrix.isValid(mCurrentTetromino.getShape(), Tetromino.DOWN)) {
-//				mCurrentTetromino.move(Tetromino.DOWN);
-//			} else {
-//				mCurrentTetromino.addToMatrix(mMatrix);
-//			}
-//
-//			gameTimer.reset();
-//		}
-//		gameTimer.tick(delta);
-//
-//		mMatrix.checkClears();
-//
-//		if (mMatrix.isGameOver()) {
-//			resetGame();
-//		}
-//
-//		if (mCurrentTetromino.isDone()) {
-//			mCurrentTetromino = mTetrominoStack.getNextPiece();
-//		}
-//
-//		mCurrentTetromino.update(mMatrix, delta);
 
 		gameLogic(delta);
 		// render -------------------------------
 		
-		mMatrix.draw(sr);
+		//((GlowMatrix) mMatrix).draw(sr);
 		
 		
 		spriteBatch.begin();
-		mMatrix.draw(spriteBatch);
+		((GlowMatrix) mMatrix).draw(spriteBatch);
 		((TetrominoGlow) mCurrentTetromino).draw(spriteBatch, mMatrix);
 		((TetrominoGlow) mTetrominoStack.peekNextPiece()).draw(spriteBatch,
 				new Point(GRID_WIDTH, GRID_HEIGHT - 2));
@@ -81,9 +57,6 @@ public class GlowScreen extends TetrisScreen {
 		
 		//text("FPS: " + Gdx.graphics.getFramesPerSecond());
 		spriteBatch.end();
-
-		//spriteBatch.getProjectionMatrix().translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
-		//sr.translate(-DESKTOP_MARGIN,-DESKTOP_MARGIN, 0);
 
 	}
 
@@ -98,7 +71,7 @@ public class GlowScreen extends TetrisScreen {
 	public void dispose() {
 		spriteBatch.dispose();
 		font.dispose();
-		mMatrix.dispose();
+		((GlowMatrix) mMatrix).dispose();
 		((TetrominoGlow) mCurrentTetromino).dispose();
 		((TetrominoStackGlow) mTetrominoStack).dispose();
 	}

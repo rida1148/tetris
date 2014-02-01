@@ -10,5 +10,6 @@ public class Dimens {
 	public static final int DESKTOP_MARGIN = (DESKTOP_WIDTH-(32*GRID_WIDTH))/2;
 	
 	public static final int CELL = 32;
+	public static final int CELL3D = 2;
 	//public static final int CELL = DESKTOP_WIDTH/GRID_WIDTH;
 }

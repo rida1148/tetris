@@ -14,23 +14,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.hexbit.tetris.vector.TetrominoVector;
 
-public class Matrix {
+public abstract class Matrix {
 	
-	int[][] matrix = new int[GRID_HEIGHT][GRID_WIDTH];
-	
-	Texture[] mCellTextures = new Texture[7];
-	
-	public Matrix(Texture[] cellTextures) {
-		for (int i = 0; i < cellTextures.length; i++) {
-			mCellTextures[i] = cellTextures[i];
-		}
-	}
-	
-	public Matrix(){
-		for (int i = 0; i < mCellTextures.length; i++) {
-			mCellTextures[i] = new Texture(Gdx.files.internal("neon/"+i+".png"));
-		}
-	}
+	protected int[][] matrix = new int[GRID_HEIGHT][GRID_WIDTH];
 	
 	void debugLoad(){
 		for (int y = 0; y < 5; y++) {
@@ -130,53 +116,6 @@ public class Matrix {
 		return isValid(shape,newPos);
 	}
 	
-	public void draw(ShapeRenderer sr) {
-		sr.begin(ShapeType.Filled);
-		for (int y = 0; y < matrix.length; y++) {
-			for (int x = 0; x < matrix[y].length; x++) {
-				if(matrix[y][x] != 0){				
-					sr.setColor(Tetromino.Type.values()[matrix[y][x]-1].color);
-					sr.rect(x*Dimens.CELL, y*Dimens.CELL, Dimens.CELL, Dimens.CELL);
-					
-				}
-			}
-		}
-		sr.end();
-		sr.setColor(Color.WHITE);
-		sr.begin(ShapeType.Line);
-		//horizontal
-		for (int y = 0; y <= Dimens.GRID_HEIGHT; y++) {
-			sr.line(0, CELL*y ,CELL*GRID_WIDTH, CELL*y);
-		}
-		//Vertical
-		for (int x = 0; x <= Dimens.GRID_WIDTH; x++) {
-			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
-		}
-		
-		sr.end();
-	}
-	
-	public void draw(SpriteBatch sb) {
-		//TODO draw grid here
-		
-//		//horizontal
-//		for (int y = 0; y < Dimens.GRID_HEIGHT; y++) {
-//			sr.line(0, CELL*y ,CELL*GRID_WIDTH, CELL*y);
-//		}
-//		//Vertical
-//		for (int x = 0; x < Dimens.GRID_WIDTH; x++) {
-//			sr.line(CELL*x, 0 , CELL*x, CELL*GRID_HEIGHT);
-//		}
-		
-		for (int y = 0; y < matrix.length; y++) {
-			for (int x = 0; x < matrix[y].length; x++) {
-				if(matrix[y][x] != 0){				
-					sb.draw(mCellTextures[matrix[y][x]-1], x*CELL, y*CELL,CELL, CELL);
-				}
-			}
-		}
-
-	}
 	
 	public boolean isGameOver(){
 		for (int i = 1; i < 3; i++) {
@@ -231,10 +170,4 @@ public class Matrix {
 		matrix[pos.y][pos.x] = num;
 	}
 	
-	public void dispose() {
-		for (int i = 0; i < mCellTextures.length; i++) {
-			mCellTextures[i].dispose();
-		}
-
-	}
 }

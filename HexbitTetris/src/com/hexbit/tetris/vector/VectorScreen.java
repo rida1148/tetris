@@ -34,7 +34,7 @@ public class VectorScreen extends TetrisScreen{
 	public void resetGame() {
 		mTetrominoStack = new TetrominoStackVector();
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
-		mMatrix = new Matrix();
+		mMatrix = new MatrixVector();
 	}
 	
 
@@ -72,7 +72,7 @@ public class VectorScreen extends TetrisScreen{
 
 		// render -------------------------------
 
-		mMatrix.draw(shapeRenderer);
+		((MatrixVector) mMatrix).draw(shapeRenderer);
 		((TetrominoVector) mCurrentTetromino).draw(shapeRenderer, mMatrix);
 		((TetrominoVector) mTetrominoStack.peekNextPiece()).draw(shapeRenderer,
 				new Point(GRID_WIDTH, GRID_HEIGHT - 2));

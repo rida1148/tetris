@@ -80,6 +80,8 @@ public abstract class Tetromino {
 	public void rotateClockwise(Matrix matrix) {
 		if (matrix.isValid(getNextShape(),mPos)) {
 			mCurrentRotationState = getNextRotationState();
+		}else if(matrix.isValid(getNextShape(),mPos)){
+			
 		}
 	}
 	
@@ -180,6 +182,19 @@ public abstract class Tetromino {
 		if(downHeld && matrix.isValidOld(this, DOWN)){
 			move(DOWN);
 		}
+	}
+	
+	public int getCubeCount(){
+		int total = 0;
+		int[][] shape = getShape();
+		for(int i = 0; i < shape.length; i++){
+			for (int j = 0; j < shape[0].length; j++) {
+				if(shape[i][j] == 1){
+					total ++;
+				}
+			}
+		}
+		return total;
 	}
 	// ------------------------------------------------------------------------
 
