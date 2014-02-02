@@ -2,9 +2,12 @@ package com.hexbit.tetris;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.hexbit.tetris.gui.MainMenu;
+import com.hexbit.tetris.gui.ModeSelector;
 
 public abstract class TetrisScreen implements Screen, InputProcessor {
 	protected final float PLAY_SPEED = 0.3f;
@@ -130,6 +133,9 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			mCurrentTetromino.rotateClockwise(mMatrix);
 		} else if (keycode == Keys.DOWN) {
 			mCurrentTetromino.setDownHeld(true);
+		}else if(keycode == Keys.ESCAPE){
+			((Game) Gdx.app.getApplicationListener())
+			.setScreen(new MainMenu());
 		}
 		return false;
 	}

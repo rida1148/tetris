@@ -35,8 +35,8 @@ public class Tetromino3D extends Tetromino{
 					Model model = modelBuilder.createBox(CELL3D, CELL3D, CELL3D,new Material(ColorAttribute.createDiffuse(Type.values()[mId].color)),Usage.Position | Usage.Normal);
 					ModelInstance modelInstance = new ModelInstance(model,CELL3D*x,CELL3D*y, 0);
 					modelBatch.render(modelInstance,environment);
-					
-					//model.dispose();		
+					//model.dispose();	
+					//TODO fix this dispose bug
 				}
 			}
 		}

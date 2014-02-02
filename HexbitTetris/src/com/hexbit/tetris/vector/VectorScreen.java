@@ -26,7 +26,7 @@ public class VectorScreen extends TetrisScreen{
 	public void load() {
 		shapeRenderer = new ShapeRenderer();
 		spriteBatch = new SpriteBatch();
-		font = new BitmapFont(Gdx.files.internal("ubuntu.fnt"));
+		font = new BitmapFont(Gdx.files.internal("font/ubuntu.fnt"));
 		
 	}
 

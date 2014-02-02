@@ -25,7 +25,7 @@ public class GlowScreen extends TetrisScreen {
 	public void load() {
 		spriteBatch = new SpriteBatch();
 		sr = new ShapeRenderer();
-		font = new BitmapFont(Gdx.files.internal("ubuntu.fnt"));
+		font = new BitmapFont(Gdx.files.internal("font/ubuntu.fnt"));
 	}
 	
 	@Override

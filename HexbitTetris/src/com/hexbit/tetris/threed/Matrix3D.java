@@ -47,6 +47,7 @@ public class Matrix3D extends Matrix{
 					ModelInstance modelInstance = new ModelInstance(model,CELL3D*x,CELL3D*y,0);
 					modelBatch.render(modelInstance,environment);
 					//model.dispose();
+					//TODO fix this dispose bug
 				}
 			}
 		}
