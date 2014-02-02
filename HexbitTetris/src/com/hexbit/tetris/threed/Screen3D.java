@@ -36,7 +36,7 @@ public class Screen3D extends TetrisScreen{
 	public void load() {
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
-		camera.position.set(50f, 50f, 50f);
+		camera.position.set(0, 50f, 50f);
 		camera.lookAt(0, 0, 0);
 		camera.near = 0.1f;
 		camera.far = 300f;
@@ -101,6 +101,11 @@ public class Screen3D extends TetrisScreen{
 			camera.direction.y+=.001f;
 		}else if(Gdx.input.isKeyPressed(Keys.Z)){
 			camera.direction.z+=.001f;
+		}else if(Gdx.input.isKeyPressed(Keys.SPACE)){
+			System.out.println(camera.position.toString());
+			System.out.println(camera.direction.toString());
+			System.out.println(camera.combined.toString());
+			System.out.println("-----------------");
 		}
 
 	}
