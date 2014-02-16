@@ -1,22 +1,17 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.CELL;
 import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
 import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.hexbit.tetris.vector.TetrominoVector;
+import com.hexbit.tetris.modes.vector.TetrominoVector;
 
 public abstract class Matrix {
 	
 	protected int[][] matrix = new int[GRID_HEIGHT][GRID_WIDTH];
+	
+	private int score = 0;
 	
 	void debugLoad(){
 		for (int y = 0; y < 5; y++) {
@@ -151,9 +146,9 @@ public abstract class Matrix {
 		
 		for (int i = 0; i < fullLines.size(); i++) {
 			for (int y = fullLines.get(i); y < matrix.length-1; y++) {
- 
 				shiftGridDownTo(y);
 			}
+			setScore(getScore() + 1);
 			System.out.println("cleared @ "+fullLines.get(i));
 		}
 		//starting from the top, see if they are next to each other
@@ -168,6 +163,14 @@ public abstract class Matrix {
 	
 	public void setCell(Point pos,int num){
 		matrix[pos.y][pos.x] = num;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 	
 }

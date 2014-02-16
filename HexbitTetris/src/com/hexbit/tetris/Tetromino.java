@@ -3,7 +3,7 @@ package com.hexbit.tetris;
 import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
-import com.hexbit.tetris.vector.TetrominoVector;
+import com.hexbit.tetris.modes.vector.TetrominoVector;
 
 
 // TODO (optimise) make tetromino raw class for only data then
@@ -52,9 +52,9 @@ public abstract class Tetromino {
 		// this(2);
 	}
 
-	public void resetPos() {
+	public void reset() {
 		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3);
-	//	mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3) ;
+		mCurrentRotationState = 0;
 	}
 
 	public Tetromino(int id) {
@@ -62,7 +62,7 @@ public abstract class Tetromino {
 		mId = t.id;
 		mCurrentRotationState = 0;
 		rotationStates = RotationStateList.values()[id].getRotationStates();
-		resetPos();
+		reset();
 		leftHeldTimer.pause();
 		rightHeldTimer.pause();
 	}

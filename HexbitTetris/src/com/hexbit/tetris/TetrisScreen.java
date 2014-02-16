@@ -17,20 +17,20 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	protected Tetromino mCurrentTetromino;
 
 	protected Timer gameTimer = new Timer(PLAY_SPEED);
-	
+
 	abstract public void load();
-	
+
 	abstract public void resetGame();
-	
+
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(this);
 		load();
 		resetGame();
-		
+
 	}
-	
-	protected void gameLogic(float delta){
+
+	protected void gameLogic(float delta) {
 		if (gameTimer.isFinished()) {
 			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.DOWN)) {
 				mCurrentTetromino.move(Tetromino.DOWN);
@@ -110,8 +110,8 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			if (!madeLeftMove) {
 				leftAllowed = true;
 			}
-			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.LEFT) && leftAllowed
-					&& !madeLeftMove) {
+			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.LEFT)
+					&& leftAllowed && !madeLeftMove) {
 				mCurrentTetromino.move(Tetromino.LEFT);
 				leftAllowed = false;
 				madeLeftMove = true;
@@ -133,9 +133,8 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			mCurrentTetromino.rotateClockwise(mMatrix);
 		} else if (keycode == Keys.DOWN) {
 			mCurrentTetromino.setDownHeld(true);
-		}else if(keycode == Keys.ESCAPE){
-			((Game) Gdx.app.getApplicationListener())
-			.setScreen(new MainMenu());
+		} else if (keycode == Keys.ESCAPE) {
+			((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
 		}
 		return false;
 	}
@@ -152,17 +151,13 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			mCurrentTetromino.getRightHeldTimer().reset();
 			mCurrentTetromino.getRightHeldTimer().pause();
 			madeRightMove = false;
-		}
-		// ---------
-		else if (Keys.C == keycode) {
+		} else if (Keys.C == keycode) {
 			Tetromino held = mTetrominoStack.getHeld();
 			if (held == null) {
 				mTetrominoStack.setHeld(mCurrentTetromino);
 				mCurrentTetromino = mTetrominoStack.getNextPiece();
 			} else {
-				mTetrominoStack.setHeld(mCurrentTetromino);
-				held.resetPos();
-				mCurrentTetromino = held;
+				mCurrentTetromino = mTetrominoStack.swap(mCurrentTetromino);
 			}
 		} else if (keycode == Keys.R) {
 			resetGame();

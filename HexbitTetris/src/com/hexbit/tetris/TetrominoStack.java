@@ -1,36 +1,43 @@
 package com.hexbit.tetris;
 
 public abstract class TetrominoStack {
-	protected Tetromino[] stack = new Tetromino[10];
-	protected Tetromino held = null;
+	protected Tetromino[] mStack = new Tetromino[10];
+	protected Tetromino mHeld = null;
 	
 	public abstract Tetromino getNewTetromino();
 	
 	public TetrominoStack() {
-		for (int i = 0; i < stack.length; i++) {
-			stack[i] = getNewTetromino();
+		for (int i = 0; i < mStack.length; i++) {
+			mStack[i] = getNewTetromino();
 		}
 	}
 	
 	public Tetromino getNextPiece(){
-		Tetromino tmp = stack[stack.length-1];
+		Tetromino tmp = mStack[mStack.length-1];
 		
-		for (int i = stack.length-1; i > 0; i--) {
-			stack[i] = stack[i-1];
+		for (int i = mStack.length-1; i > 0; i--) {
+			mStack[i] = mStack[i-1];
 		}	
-		stack[0] = getNewTetromino();
+		mStack[0] = getNewTetromino();
 		
 		return tmp;
 	}
 	public Tetromino peekNextPiece(){
-		return stack[stack.length-1];
+		return mStack[mStack.length-1];
+	}
+	
+	public Tetromino swap(Tetromino tetromino){
+		Tetromino tmp = mHeld;
+		setHeld(tetromino);
+		return tmp;
 	}
 	
 	public Tetromino getHeld(){
-		return held;
+		return mHeld;
 	}
 	public void setHeld(Tetromino h){
-		held = h;
+		h.reset();
+		mHeld = h;
 	}
 
 }

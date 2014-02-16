@@ -23,7 +23,6 @@ private static final int SPACE = 10;
 	private TextureAtlas textureAtlas;
 	private Table table;
 	private Label titleLabel;
-	private TextButton startButton,scoresButton,settingsButton,aboutButton;
 	private BitmapFont font;
 	private Skin skin; 	
 	
