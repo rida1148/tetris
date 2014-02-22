@@ -76,7 +76,7 @@ public abstract class GuiScreen implements Screen {
 			buttons[i].addListener(listeners[i]);
 			table.add(buttons[i]);
 			table.getCell(buttons[i]).spaceBottom(SPACE);
-			if (i < buttons.length) { // -1?
+			if (i < buttons.length) { 
 				table.row();
 			}
 
@@ -96,26 +96,18 @@ public abstract class GuiScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -16,6 +16,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	final float LOCK_DELAY = 0.5f;
 
 	protected Matrix mMatrix;
+
 	protected TetrominoStack mTetrominoStack;
 	protected Tetromino mCurrentTetromino;
 	protected Timer gameSpeedTimer;
@@ -26,6 +27,10 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	
 	int biggestBackToBacks = 0;
 	int currentBackToBacks = 0;
+	
+	boolean tetrominoJustAppended = false;
+	
+	float gameTime = 0;
 
 	abstract public void load();
 
@@ -33,6 +38,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		alreadySwapped = false;
 		setLevel(START_LEVEL);
 		lockDelayTimer.pause();
+		gameTime=0;
 	}
 
 	@Override
@@ -40,14 +46,12 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(this);
 		load();
 		resetGame();
-		// test code, getspeed works
+		// testing all speeds withs levels - getSpeed works
 		// for (int i = 0; i <= 10; i++) {
 		// System.out.println(mCurrentTetromino.getSpeed(i));
 		// }
 
 	}
-	
-	boolean tetrominoJustAppended = false;
 
 	protected void gameLogic(float delta) {
 		if (gameSpeedTimer.isFinished()) {
@@ -80,7 +84,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 					//TODO show user 
 				}
 				if(currentBackToBacks >= 2){
-					//TODO award points and show user
+					//TODO award points and show user via notification class
 				}
 				currentBackToBacks = 0;
 			}
@@ -99,6 +103,8 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		mCurrentTetromino.update(mMatrix, delta);
 		
 		lockDelayTimer.tick(delta);
+		
+		gameTime+=delta;
 	}
 
 	void setLevel(int level) {
@@ -187,6 +193,18 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			resetGame();
 		}
 		return false;
+	}
+	
+	public Matrix getMatrix() {
+		return mMatrix;
+	}
+
+	public void setMatrix(Matrix matrix) {
+		this.mMatrix = matrix;
+	}
+	
+	public float getGameTime() {
+		return gameTime;
 	}
 
 }

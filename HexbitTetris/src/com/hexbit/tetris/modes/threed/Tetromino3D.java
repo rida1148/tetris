@@ -24,7 +24,7 @@ public class Tetromino3D extends Tetromino{
 	// for image grathics
 	public Tetromino3D(int id) {
 		super(id);
-		mCellTexture = new Texture(Gdx.files.internal("gem/"+id+".png")); //TODO change to set name not neon
+		mCellTexture = new Texture(Gdx.files.internal("gem/"+id+".png")); 
 	}
 
 	public Tetromino3D() {
@@ -42,7 +42,7 @@ public class Tetromino3D extends Tetromino{
 					//TextureAttribute.createDiffuse(texture)
 					Model model = modelBuilder.createBox(CELL3D, CELL3D, CELL3D,new Material(TextureAttribute.createDiffuse(mCellTexture)) ,Usage.Position | Usage.Normal);
 					//Model model = modelBuilder.createBox(CELL3D, CELL3D, CELL3D,new Material(ColorAttribute.createDiffuse(Type.values()[mId].color)),Usage.Position | Usage.Normal);
-					
+					//TODO get 3d textures to work
 					ModelInstance modelInstance = new ModelInstance(model,CELL3D*x,CELL3D*y, 0);
 					modelBatch.render(modelInstance,environment);
 					//model.dispose();	

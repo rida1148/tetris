@@ -21,7 +21,7 @@ public abstract class Tetromino2D extends Tetromino{
 	// for image grathics
 	public Tetromino2D(int id) {
 		super(id);
-		mCellTexture = new Texture(Gdx.files.internal(getImageFolderName()+"/"+id+".png")); //TODO change to set name not neon
+		mCellTexture = new Texture(Gdx.files.internal(getImageFolderName()+"/"+id+".png")); 
 	}
 
 	public Tetromino2D() {
@@ -45,7 +45,6 @@ public abstract class Tetromino2D extends Tetromino{
 			com.badlogic.gdx.graphics.Color c = sb.getColor();
             sb.setColor(c.r, c.g, c.b, GHOST_ALPHA);
 			Point pos = getHardDropPos(matrix);
-			// TODO set alpha
 			for (int i = 0; i < shape.length; i++) {
 				for (int j = 0; j < shape[i].length; j++) {
 					if (shape[i][j] != 0) {
@@ -78,7 +77,6 @@ public abstract class Tetromino2D extends Tetromino{
 			com.badlogic.gdx.graphics.Color c = sb.getColor();
             sb.setColor(c.r, c.g, c.b, GHOST_ALPHA);
 			Point pos = getHardDropPos(matrix);
-			// TODO set alpha
 			for (int i = 0; i < shape.length; i++) {
 				for (int j = 0; j < shape[i].length; j++) {
 					if (shape[i][j] != 0) {
