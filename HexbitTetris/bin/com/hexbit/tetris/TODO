@@ -1,0 +1,8 @@
+--game logic--
+	wall kicks
+	
+--code--
+	use generics
+	sort out naming (matrix to grid, vector to primatives)
+--graphics--
+	grid

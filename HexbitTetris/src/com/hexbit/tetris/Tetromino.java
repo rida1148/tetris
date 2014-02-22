@@ -3,16 +3,33 @@ package com.hexbit.tetris;
 import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.hexbit.tetris.modes.vector.TetrominoVector;
-
 
 // TODO (optimise) make tetromino raw class for only data then
 // have this extend it
 
-public abstract class Tetromino {
-	
+public class Tetromino {
+	// time it takes to be able to set keys as held
 	final float KEY_HOLD_DELAY = 0.2f;
-	
+
+	final float SPEED_MIN = .45f;
+	final float SPEED_MAX = .02f;
+
+	private final Timer leftHeldTimer = new Timer(KEY_HOLD_DELAY);
+	private final Timer rightHeldTimer = new Timer(KEY_HOLD_DELAY);
+
+	// speed of the tetromino once a key is held down
+	final float HOLD_SPEED = 0.09f;
+	private final Timer keyHoldSpeedTimer = new Timer(HOLD_SPEED);
+
+	public static final Point DOWN = new Point(0, -1);
+	public static final Point LEFT = new Point(-1, 0);
+	public static final Point RIGHT = new Point(1, 0);
+	public static final Point UP = new Point(0, 1);
+
+	protected static final boolean ghost = true;
+
 	protected int mId;
 
 	private int[][][] rotationStates;
@@ -22,16 +39,8 @@ public abstract class Tetromino {
 	private boolean done = false;
 
 	public static Random random = new Random();
-	protected static final boolean ghost = true;
-	
-	Timer leftHeldTimer = new Timer(KEY_HOLD_DELAY);
-	Timer rightHeldTimer = new Timer(KEY_HOLD_DELAY);
-	
-	private boolean downHeld;
 
-	public static final Point DOWN = new Point(0, -1);
-	public static final Point LEFT = new Point(-1, 0);
-	public static final Point RIGHT = new Point(1, 0);
+	private boolean downHeld;
 
 	public static enum Type {
 		I(0, Color.CYAN), O(1, Color.YELLOW), T(2, new Color(230, 230, 259, 0)), S(
@@ -53,7 +62,7 @@ public abstract class Tetromino {
 	}
 
 	public void reset() {
-		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT-3);
+		mPos = new Point(Dimens.GRID_WIDTH / 2, Dimens.GRID_HEIGHT - 3);
 		mCurrentRotationState = 0;
 	}
 
@@ -66,43 +75,66 @@ public abstract class Tetromino {
 		leftHeldTimer.pause();
 		rightHeldTimer.pause();
 	}
-	
-	private int getNextRotationState(){
+
+	private Tetromino(Tetromino tetromino) {
+		this(tetromino.getId());
+		setPos(tetromino.getPos());
+		setCurrentRotationState(tetromino.getCurrentRotationState());
+	}
+
+	private int getNextRotationState() {
 		if (rotationStates.length > 0) {
 			if (mCurrentRotationState < rotationStates.length - 1) {
-				return mCurrentRotationState+1;
+				return mCurrentRotationState + 1;
 			}
 			return 0;
 		}
 		return 0;
 	}
 
-	public void rotateClockwise(Matrix matrix) {
-		if (matrix.isValid(getNextShape(),mPos)) {
+	public boolean rotateClockwise(Matrix matrix) {
+		if (matrix.isValid(getNextShape(), mPos)) {
 			mCurrentRotationState = getNextRotationState();
-		}else if(matrix.isValid(getNextShape(),mPos)){
-			
+			return true;
 		}
-	}
-	
-	void rotateClockwiseOld(Matrix matrix) {
-		int nextState = mCurrentRotationState;
-		if (rotationStates.length > 0) {
-			if (mCurrentRotationState < rotationStates.length - 1) {
-				nextState++;
-			} else {
-				nextState = 0;
-			}
-		}
-		Tetromino test = new TetrominoVector(mId);
-		test.setPos(mPos);
-		test.setCurrentRotationState(nextState);
-
-		if (matrix.isValid(test)) {
-			mCurrentRotationState = nextState;
+		Tetromino tmp = new Tetromino(this);
+		tmp.setCurrentRotationState(getNextRotationState());
+		//wall kicks
+		if (matrix.isValid(tmp, LEFT)) {
+			move(LEFT);
+			mCurrentRotationState = getNextRotationState();
+			return true;
+		} else if (matrix.isValid(tmp, RIGHT)) {
+			move(RIGHT);
+			mCurrentRotationState = getNextRotationState();
+			return true;
+		}else if(matrix.isValid(tmp,UP)){
+			move(UP);
+			mCurrentRotationState = getNextRotationState();
+			return true;
 		}
 
+		return false;
 	}
+
+	// void rotateClockwiseOld(Matrix matrix) {
+	// int nextState = mCurrentRotationState;
+	// if (rotationStates.length > 0) {
+	// if (mCurrentRotationState < rotationStates.length - 1) {
+	// nextState++;
+	// } else {
+	// nextState = 0;
+	// }
+	// }
+	// Tetromino test = new TetrominoVector(mId);
+	// test.setPos(mPos);
+	// test.setCurrentRotationState(nextState);
+	//
+	// if (matrix.isValid(test)) {
+	// mCurrentRotationState = nextState;
+	// }
+	//
+	// }
 
 	public void move(Point move) {
 		mPos.x += move.x;
@@ -116,7 +148,7 @@ public abstract class Tetromino {
 
 	public Point getHardDropPos(Matrix matrix) {
 		Point movement = new Point(0, 0);
-		while (matrix.isValidOld(this, movement)) {
+		while (matrix.isValid(this, movement)) {
 			movement.y--;
 		}
 		Point pos = new Point(mPos);
@@ -137,8 +169,7 @@ public abstract class Tetromino {
 			}
 			System.out.println();
 		}
-	} 
-	
+	}
 
 	public void addToMatrix(Matrix matrix) {
 		int[][] shape = getShape();
@@ -146,56 +177,58 @@ public abstract class Tetromino {
 			for (int j = 0; j < shape[i].length; j++) {
 				if (shape[i][j] == 1) {
 					int x = getPos().x + j;
-					int y = getPos().y + i ;
+					int y = getPos().y + i;
 					matrix.setCell(new Point(x, y), mId + 1);
 				}
 			}
 		}
 		setDone(true);
 	}
-	
-	public void update(Matrix matrix,float delta){
-		
+
+	public void update(Matrix matrix, float delta) {
 		leftHeldTimer.tick(delta);
 		rightHeldTimer.tick(delta);
-		
-		if(leftHeldTimer.isFinished() && matrix.isValidOld(this, Tetromino.LEFT) ){
+		keyHoldSpeedTimer.tick(delta);
+
+		if (leftHeldTimer.isFinished() && matrix.isValid(this, Tetromino.LEFT)
+				&& keyHoldSpeedTimer.isFinished()) {
 			move(Tetromino.LEFT);
 		}
-		if(rightHeldTimer.isFinished() && matrix.isValidOld(this, Tetromino.RIGHT) ){
+		if (rightHeldTimer.isFinished()
+				&& matrix.isValid(this, Tetromino.RIGHT)
+				&& keyHoldSpeedTimer.isFinished()) {
 			move(Tetromino.RIGHT);
 		}
-		
-//		if(leftHeld){
-//			if(matrix.isValid(this, Tetromino.LEFT) && !leftJustTapped){
-//				move(Tetromino.LEFT);
-//			}
-//			leftJustTapped = true;
-//		}
-//		if(rightHeld){
-//			if(matrix.isValid(this, Tetromino.RIGHT) && !leftJustTapped) {
-//				move(Tetromino.RIGHT);
-//			}
-//			leftJustTapped = true;
-//		}
-//		
-		if(downHeld && matrix.isValidOld(this, DOWN)){
+		if (downHeld && matrix.isValid(this, DOWN)
+				&& keyHoldSpeedTimer.isFinished()) {
 			move(DOWN);
 		}
+		if (keyHoldSpeedTimer.isFinished()) {
+			keyHoldSpeedTimer.reset();
+		}
+
 	}
-	
-	public int getCubeCount(){
+
+	public int getCubeCount() {
 		int total = 0;
 		int[][] shape = getShape();
-		for(int i = 0; i < shape.length; i++){
+		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[0].length; j++) {
-				if(shape[i][j] == 1){
-					total ++;
+				if (shape[i][j] == 1) {
+					total++;
 				}
 			}
 		}
 		return total;
 	}
+
+	float getSpeed(int level) {
+		float p = ((float) level) / 10;
+		float r = SPEED_MIN - SPEED_MAX;
+		float speed = r * p;
+		return SPEED_MIN - speed; // invert cus smaller is faster
+	}
+
 	// ------------------------------------------------------------------------
 
 	Point getPos() {
@@ -221,24 +254,25 @@ public abstract class Tetromino {
 	public void setCurrentRotationState(int currentRotationState) {
 		this.mCurrentRotationState = currentRotationState;
 	}
-	
+
 	public boolean isDownHeld() {
 		return downHeld;
 	}
 
-	public void setDownHeld(boolean downHeld){
+	public void setDownHeld(boolean downHeld) {
 		this.downHeld = downHeld;
 	}
-	
+
 	public Timer getLeftHeldTimer() {
 		return leftHeldTimer;
 	}
+
 	public Timer getRightHeldTimer() {
 		return rightHeldTimer;
 	}
 
 	public void startLeftHeldTimer() {
-		leftHeldTimer.start();	
+		leftHeldTimer.start();
 	}
 
 	public void startRightHeldTimer() {
@@ -256,7 +290,7 @@ public abstract class Tetromino {
 	public int[][] getShape() {
 		return rotationStates[mCurrentRotationState];
 	}
-	
+
 	public int[][] getNextShape() {
 		return rotationStates[getNextRotationState()];
 	}

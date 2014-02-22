@@ -21,4 +21,5 @@ public class GlowScreen extends TetrisScreen2D{
 	public TetrominoStack getNewTetrominoStack() {
 		return new TetrominoStackGlow();
 	}
+
 }

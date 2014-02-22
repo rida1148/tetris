@@ -8,13 +8,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.hexbit.tetris.modes.gem.GemScreen;
+import com.hexbit.tetris.modes.gem.SprintModeGem;
 import com.hexbit.tetris.modes.glow.GlowScreen;
 import com.hexbit.tetris.modes.threed.Screen3D;
 import com.hexbit.tetris.modes.vector.VectorScreen;
 
 public class ModeSelector extends GuiScreen {
 
-	final static Class[] modes = new Class[] {	GemScreen.class,Screen3D.class };
+	final static Class[] modes = new Class[] {	GemScreen.class,SprintModeGem.class,Screen3D.class };
 	
 	static String[] getStringList(){
 		ArrayList<String> names = new ArrayList<String>();

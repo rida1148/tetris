@@ -1,9 +1,5 @@
 package com.hexbit.tetris.modes.render2d;
 
-import static com.hexbit.tetris.Dimens.CELL;
-import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
-import static com.hexbit.tetris.Dimens.GRID_WIDTH;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -26,6 +22,9 @@ public class GraphicUtils {
 		shapeRenderer.box(rect.x, rect.y, 0, rect.width, rect.height, 0);
 		shapeRenderer.end();
 	}
-	
+	public static void notify(String text){
+		//TODO this notify method 
+		//slide down while fading
+	}
 	
 }

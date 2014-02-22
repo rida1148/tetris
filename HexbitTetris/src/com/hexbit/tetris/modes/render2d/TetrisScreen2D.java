@@ -32,8 +32,8 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 	protected BitmapFont gameFont;
 	protected BitmapFont scoreFont;
 
-	int gameFontHeight;
-	int scoreFontHeight;
+	protected int gameFontHeight;
+	protected int scoreFontHeight;
 
 	@Override
 	public void load() {
@@ -54,6 +54,7 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		mMatrix = getNewMatrix();
 		mTetrominoStack = getNewTetrominoStack();
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
+		super.resetGame();
 	}
 
 	@Override
@@ -83,8 +84,6 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		//next bg
 		GraphicUtils.drawBox(shapeRenderer, new Rectangle(MARGIN + GRIDWPX + COMPONENT_PAD, GRIDHPX, MARGIN - (COMPONENT_PAD*2), MARGIN));
 		
-
-		
 		
 		// image only rendering so can call begin from here
 		// (there's no clashes with shape renderer)
@@ -105,11 +104,16 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 		gameFont.draw(spriteBatch, "HELD", COMPONENT_PAD, MARGIN + GRIDHPX);
 		gameFont.draw(spriteBatch, "LEVEL", COMPONENT_PAD, MARGIN + (GRIDHPX / 2));
-		gameFont.draw(spriteBatch, "NEXT", MARGIN + GRIDWPX + COMPONENT_PAD, MARGIN
-				+ GRIDHPX);
+		gameFont.draw(spriteBatch, "NEXT", MARGIN + GRIDWPX + COMPONENT_PAD, MARGIN+ GRIDHPX);
+		
+	//	gameFont.draw(spriteBatch, "SCORE", MARGIN-gameFont.getBounds("SCORE").width - COMPONENT_PAD, MARGIN + GRIDHPX +gameFontHeight+(COMPONENT_PAD*2));
 
+		//score
 		scoreFont.draw(spriteBatch, "" + mMatrix.getScore(), MARGIN, MARGIN
 				+ GRIDHPX + scoreFontHeight + (COMPONENT_PAD*2));
+		//level
+		scoreFont.draw(spriteBatch, ""+mLevel, MARGIN/2, MARGIN + (GRIDHPX / 2)-scoreFontHeight);
+		
 
 		spriteBatch.end();
 	}
@@ -129,6 +133,65 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		((TetrominoStack2D) mTetrominoStack).dispose();
 		gameFont.dispose();
 		scoreFont.dispose();
+	}
+	
+	@Override
+	public void resize(int width, int height) {
+		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

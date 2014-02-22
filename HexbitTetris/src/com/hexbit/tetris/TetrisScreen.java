@@ -6,43 +6,86 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.Setters.ACubemap;
 import com.hexbit.tetris.gui.MainMenu;
 import com.hexbit.tetris.gui.ModeSelector;
 
 public abstract class TetrisScreen implements Screen, InputProcessor {
-	protected final float PLAY_SPEED = 0.3f;
+	public static final int LEVEL_COUNT = 10;
+	final int START_LEVEL = 0;
+	final float LOCK_DELAY = 0.5f;
 
 	protected Matrix mMatrix;
 	protected TetrominoStack mTetrominoStack;
 	protected Tetromino mCurrentTetromino;
+	protected Timer gameSpeedTimer;
+	private Timer lockDelayTimer = new Timer(LOCK_DELAY);
 
-	protected Timer gameTimer = new Timer(PLAY_SPEED);
+	protected int mLevel;
+	boolean alreadySwapped;
+	
+	int biggestBackToBacks = 0;
+	int currentBackToBacks = 0;
 
 	abstract public void load();
 
-	abstract public void resetGame();
+	public void resetGame(){
+		alreadySwapped = false;
+		setLevel(START_LEVEL);
+		lockDelayTimer.pause();
+	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(this);
 		load();
 		resetGame();
+		// test code, getspeed works
+		// for (int i = 0; i <= 10; i++) {
+		// System.out.println(mCurrentTetromino.getSpeed(i));
+		// }
 
 	}
+	
+	boolean tetrominoJustAppended = false;
 
 	protected void gameLogic(float delta) {
-		if (gameTimer.isFinished()) {
-			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.DOWN)) {
+		if (gameSpeedTimer.isFinished()) {
+			if (mMatrix.isValid(mCurrentTetromino, Tetromino.DOWN)) {
 				mCurrentTetromino.move(Tetromino.DOWN);
+				lockDelayTimer.reset();
+				lockDelayTimer.pause();
 			} else {
-				mCurrentTetromino.addToMatrix(mMatrix);
+				lockDelayTimer.start();
+				if(lockDelayTimer.isFinished()){
+					mCurrentTetromino.addToMatrix(mMatrix);
+					tetrominoJustAppended = true;
+					lockDelayTimer.reset();
+				}
 			}
 
-			gameTimer.reset();
+			gameSpeedTimer.reset();
 		}
-		gameTimer.tick(delta);
+		gameSpeedTimer.tick(delta);
 
-		mMatrix.checkClears();
+		int clears = mMatrix.checkClears(mLevel); 
+		
+		if(tetrominoJustAppended){
+			if(clears > 0){
+				currentBackToBacks += clears;
+			}else{
+				if(currentBackToBacks > biggestBackToBacks){
+					biggestBackToBacks = currentBackToBacks;
+					System.out.println(biggestBackToBacks);
+					//TODO show user 
+				}
+				if(currentBackToBacks >= 2){
+					//TODO award points and show user
+				}
+				currentBackToBacks = 0;
+			}
+			tetrominoJustAppended = false;
+		}
 
 		if (mMatrix.isGameOver()) {
 			resetGame();
@@ -50,50 +93,17 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 
 		if (mCurrentTetromino.isDone()) {
 			mCurrentTetromino = mTetrominoStack.getNextPiece();
+			alreadySwapped = false;
 		}
 
 		mCurrentTetromino.update(mMatrix, delta);
+		
+		lockDelayTimer.tick(delta);
 	}
 
-	@Override
-	public void hide() {
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
-	}
-
-	@Override
-	public void resize(int width, int height) {
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
+	void setLevel(int level) {
+		mLevel = level;
+		gameSpeedTimer = new Timer(mCurrentTetromino.getSpeed(mLevel));
 	}
 
 	boolean leftAllowed = false;
@@ -106,31 +116,41 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	public boolean keyDown(int keycode) {
 		// freaky boolean logic!
 		if (keycode == Keys.LEFT) {
+			lockDelayTimer.reset();
 			mCurrentTetromino.startLeftHeldTimer();
 			if (!madeLeftMove) {
 				leftAllowed = true;
 			}
-			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.LEFT)
+			// single move
+			if (mMatrix.isValid(mCurrentTetromino, Tetromino.LEFT)
 					&& leftAllowed && !madeLeftMove) {
 				mCurrentTetromino.move(Tetromino.LEFT);
 				leftAllowed = false;
 				madeLeftMove = true;
+
 			}
 		} else if (keycode == Keys.RIGHT) {
+			lockDelayTimer.reset();
 			mCurrentTetromino.startRightHeldTimer();
 			if (!madeRightMove) {
 				rightAllowed = true;
 			}
-			if (mMatrix.isValidOld(mCurrentTetromino, Tetromino.RIGHT)
+			// single move
+			if (mMatrix.isValid(mCurrentTetromino, Tetromino.RIGHT)
 					&& rightAllowed && !madeRightMove) {
 				mCurrentTetromino.move(Tetromino.RIGHT);
 				rightAllowed = false;
 				madeRightMove = true;
 			}
-		} else if (keycode == Keys.SPACE) {
+		} //HARD DROP
+		else if (keycode == Keys.SPACE) {
 			mCurrentTetromino.hardDrop(mMatrix);
-		} else if (keycode == Keys.UP) {
-			mCurrentTetromino.rotateClockwise(mMatrix);
+			tetrominoJustAppended = true;
+		}//ROTATION 
+		else if (keycode == Keys.UP) {
+			if(mCurrentTetromino.rotateClockwise(mMatrix)){
+				lockDelayTimer.reset();
+			}
 		} else if (keycode == Keys.DOWN) {
 			mCurrentTetromino.setDownHeld(true);
 		} else if (keycode == Keys.ESCAPE) {
@@ -151,23 +171,21 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			mCurrentTetromino.getRightHeldTimer().reset();
 			mCurrentTetromino.getRightHeldTimer().pause();
 			madeRightMove = false;
-		} else if (Keys.C == keycode) {
-			Tetromino held = mTetrominoStack.getHeld();
-			if (held == null) {
-				mTetrominoStack.setHeld(mCurrentTetromino);
-				mCurrentTetromino = mTetrominoStack.getNextPiece();
-			} else {
-				mCurrentTetromino = mTetrominoStack.swap(mCurrentTetromino);
+		} // hold
+		else if (Keys.C == keycode) {
+			if (!alreadySwapped) {
+				Tetromino held = mTetrominoStack.getHeld();
+				if (held == null) {
+					mTetrominoStack.setHeld(mCurrentTetromino);
+					mCurrentTetromino = mTetrominoStack.getNextPiece();
+				} else {
+					mCurrentTetromino = mTetrominoStack.swap(mCurrentTetromino);
+					alreadySwapped = true;
+				}
 			}
 		} else if (keycode == Keys.R) {
 			resetGame();
 		}
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-
 		return false;
 	}
 
