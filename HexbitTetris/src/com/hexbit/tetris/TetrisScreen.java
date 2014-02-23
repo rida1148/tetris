@@ -29,6 +29,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	int currentBackToBacks = 0;
 	
 	boolean tetrominoJustAppended = false;
+	protected boolean firstReset = true;
 	
 	float gameTime = 0;
 
@@ -39,6 +40,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		setLevel(START_LEVEL);
 		lockDelayTimer.pause();
 		gameTime=0;
+		firstReset = false;
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package com.hexbit.tetris;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.hexbit.tetris.gui.MainMenu;
-import com.hexbit.tetris.modes.gem.GemScreen;
+import com.hexbit.tetris.modes.gem.MarathonModeGem;
 import com.hexbit.tetris.modes.gem.SprintModeGem;
 
 public class Tetris extends Game {
@@ -15,7 +15,7 @@ public class Tetris extends Game {
 		//setScreen(new VectorScreen());
 		//setScreen(new GlowScreen());
 		//setScreen(new Screen3D());
-		//setScreen(new MainMenu());
-		setScreen(new SprintModeGem());
+		setScreen(new MainMenu());
+		//setScreen(new SprintModeGem());
 	}
 }

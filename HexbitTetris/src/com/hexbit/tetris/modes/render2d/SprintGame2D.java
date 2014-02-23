@@ -14,7 +14,7 @@ public abstract class SprintGame2D extends TetrisScreen2D {
 
 	float time = 0;
 
-	final int FINISH_LINE_COUNT = 1;
+	final int FINISH_LINE_COUNT = 40;
 
 	@Override
 	public void resetGame() {
@@ -30,13 +30,13 @@ public abstract class SprintGame2D extends TetrisScreen2D {
 		scoreFont.draw(spriteBatch, Utils.secondsToMins((int) time), MARGIN
 				+ (GRIDWPX / 2), MARGIN + GRIDHPX + scoreFontHeight
 				+ (COMPONENT_PAD * 2));
+		scoreFont.draw(spriteBatch, 40-mMatrix.getLineCount()+"",((int) Gdx.graphics.getWidth()/2-(scoreFont.getSpaceWidth()/2)), MARGIN-scoreFontHeight);
 		spriteBatch.end();
 		time += delta;
 		if (mMatrix.getLineCount() >= FINISH_LINE_COUNT) {
 			System.out.println("time: " + time);
-			((Game) Gdx.app.getApplicationListener())
-					.setScreen(new FinishScreen(mMatrix.getScore(), mMatrix
-							.getLineCount(), (int) time));
+			Utils.setScreen(new FinishScreen(this, null, "Finished!"));
+			
 		}
 	}
 

@@ -13,20 +13,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.Game;
+import com.hexbit.tetris.Utils;
 
 /***
  * 
  * @author brett
  * 
  *         A screen with a title label and a text area body for displaying text
+ *         
  */
-
+// TODO different font for body
 public class TextScreen implements Screen {
 	private Stage stage;
 	private TextureAtlas textureAtlas;
@@ -38,14 +41,17 @@ public class TextScreen implements Screen {
 	private String[] mBody;
 
 	private Label titleLabel;
-	private TextField mBodyField;
-	private Button okButton;
+	private Label mBodyField;
+	protected Button okButton;
 
 	private final Color fontColor = Color.WHITE;
 
-	public TextScreen(String title, String... body) {
+	private Screen destination;
+
+	public TextScreen(String title, Screen destination, String... body) {
 		mTitle = title;
 		mBody = body;
+		this.destination = destination;
 	}
 
 	@Override
@@ -67,19 +73,12 @@ public class TextScreen implements Screen {
 		titleLabel = new Label(mTitle, titleStyle);
 
 		String bodyText = "";
-		
+
 		for (int i = 0; i < mBody.length; i++) {
 			bodyText += mBody[i] + "\n";
 		}
-		
-		TextFieldStyle textFieldStyle = new TextFieldStyle();
-		textFieldStyle.font = font;
-		textFieldStyle.fontColor = fontColor;
-		
 
-		mBodyField = new TextField(bodyText, textFieldStyle);
-		
-		System.out.println(bodyText);
+		mBodyField = new Label(bodyText, titleStyle);
 
 		TextButtonStyle buttonStyle = new TextButtonStyle();
 		buttonStyle.up = skin.getDrawable("button-up");
@@ -89,12 +88,21 @@ public class TextScreen implements Screen {
 		buttonStyle.font = font;
 
 		okButton = new TextButton("OK", buttonStyle);
-		okButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
-			}
-		});
+		if (destination == null) {
+			okButton.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					Utils.setScreen(new MainMenu());
+				}
+			});
+		} else {
+			okButton.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					Utils.setScreen(destination);
+				}
+			});
+		}
 
 		table.add(titleLabel);
 		table.getCell(titleLabel).spaceBottom(20);
@@ -104,6 +112,9 @@ public class TextScreen implements Screen {
 		table.add(okButton);
 
 		stage.addActor(table);
+
+		// table.debug();
+
 	}
 
 	@Override

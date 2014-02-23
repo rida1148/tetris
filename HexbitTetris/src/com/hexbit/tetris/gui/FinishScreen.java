@@ -1,5 +1,8 @@
 package com.hexbit.tetris.gui;
 
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.hexbit.tetris.TetrisScreen;
 import com.hexbit.tetris.Utils;
 
@@ -7,14 +10,12 @@ import com.hexbit.tetris.Utils;
 //eg show a summary like stats, score time etc
 
 public class FinishScreen extends TextScreen {
-
-	public FinishScreen(int score, int lines, int timeInSecs) {
-		super("GAME OVER", new String[] { "Score: " + score, "Lines: " + lines,
-				"Time: ", Utils.secondsToMins(timeInSecs) });
-	}
-
-	public FinishScreen(TetrisScreen screen) {
-		super("GAME OVER", new String[] {
+	/** 
+	 * if destination is set to null it will default to home screen 
+	 *
+	 * */
+	public FinishScreen(TetrisScreen screen,Screen destination,String title) {
+		super(title,destination, new String[] {
 				"Score: " + screen.getMatrix().getScore(),
 				"Lines: " + screen.getMatrix().getLineCount(),
 				"Time: " + Utils.secondsToMins((int) screen.getGameTime()) });
