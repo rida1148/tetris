@@ -10,6 +10,13 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader.Setters.ACubemap;
 import com.hexbit.tetris.gui.MainMenu;
 import com.hexbit.tetris.gui.ModeSelector;
 
+/***
+ * 
+ * @author brett
+ * Highest level of abstraction, its just a screen with the game logic 
+ * going on in the background. One step down is the tetris screen2D class
+ * which is designed for 2d rendering.
+ */
 public abstract class TetrisScreen implements Screen, InputProcessor {
 	public static final int LEVEL_COUNT = 10;
 	final int START_LEVEL = 0;

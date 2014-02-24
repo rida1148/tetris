@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.render2d;
+package com.hexbit.tetris.render2d;
 
 import static com.hexbit.tetris.Dimens.*;
 
@@ -18,13 +18,6 @@ import com.hexbit.tetris.Tetromino;
 import com.hexbit.tetris.TetrominoStack;
 
 public abstract class TetrisScreen2D extends TetrisScreen {
-
-	public abstract Tetromino getNewTetromino();
-
-	public abstract Matrix getNewMatrix();
-
-	public abstract TetrominoStack getNewTetrominoStack();
-
 	protected OrthographicCamera camera;
 	protected SpriteBatch spriteBatch;
 	protected ShapeRenderer shapeRenderer;
@@ -34,6 +27,12 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 	protected int gameFontHeight;
 	protected int scoreFontHeight;
+
+	private String mImageFolderName;
+	
+	public TetrisScreen2D(String imageFolderName) {
+		mImageFolderName = imageFolderName;
+	}
 
 	@Override
 	public void load() {
@@ -51,8 +50,8 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 	@Override
 	public void resetGame() {
-		mMatrix = getNewMatrix();
-		mTetrominoStack = getNewTetrominoStack();
+		mMatrix = new Matrix2D(mImageFolderName);
+		mTetrominoStack = new TetrominoStack2D(mImageFolderName);
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
 		super.resetGame();
 	}

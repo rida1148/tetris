@@ -1,27 +1,14 @@
 package com.hexbit.tetris;
 
-public abstract class TetrominoStack {
+import com.hexbit.tetris.render2d.Tetromino2D;
+
+public abstract class TetrominoStack{
 	protected Tetromino[] mStack = new Tetromino[10];
 	protected Tetromino mHeld = null;
+	private String mImageFolderName;
 	
-	public abstract Tetromino getNewTetromino();
+	public abstract Tetromino getNextPiece();
 	
-	public TetrominoStack() {
-		for (int i = 0; i < mStack.length; i++) {
-			mStack[i] = getNewTetromino();
-		}
-	}
-	
-	public Tetromino getNextPiece(){
-		Tetromino tmp = mStack[mStack.length-1];
-		
-		for (int i = mStack.length-1; i > 0; i--) {
-			mStack[i] = mStack[i-1];
-		}	
-		mStack[0] = getNewTetromino();
-		
-		return tmp;
-	}
 	public Tetromino peekNextPiece(){
 		return mStack[mStack.length-1];
 	}

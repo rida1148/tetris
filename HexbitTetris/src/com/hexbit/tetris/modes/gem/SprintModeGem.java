@@ -2,13 +2,14 @@ package com.hexbit.tetris.modes.gem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.hexbit.tetris.Matrix;
-import com.hexbit.tetris.Tetromino;
-import com.hexbit.tetris.TetrominoStack;
-import com.hexbit.tetris.modes.render2d.SprintGame2D;
+import com.hexbit.tetris.render2d.SprintGame2D;
 
 public class SprintModeGem extends SprintGame2D{
 	Texture bg;
+	
+	public SprintModeGem() {
+		super("gem");
+	}
 	
 	@Override
 	public void load() {
@@ -16,22 +17,6 @@ public class SprintModeGem extends SprintGame2D{
 		bg = new Texture(Gdx.files.internal("bg2.png"));
 		
 	}
-
-	@Override
-	public Tetromino getNewTetromino() {
-		return new TetrominoGem();
-	}
-
-	@Override
-	public Matrix getNewMatrix() {
-		return new MatrixGem();
-	}
-
-	@Override
-	public TetrominoStack getNewTetrominoStack() {
-		return new TetrominoStackGem();
-	}
-	
 	@Override
 	protected void drawBackground() {
 		spriteBatch.begin();

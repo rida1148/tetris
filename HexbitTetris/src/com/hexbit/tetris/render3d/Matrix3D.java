@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.threed;
+package com.hexbit.tetris.render3d;
 
 import static com.hexbit.tetris.Dimens.CELL3D;
 import static com.hexbit.tetris.Dimens.GRID_HEIGHT;

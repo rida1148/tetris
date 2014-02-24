@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.hexbit.tetris.modes.vector.TetrominoVector;
 
 public class Tetromino {
 	// time it takes to be able to set keys as held

@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.render2d;
+package com.hexbit.tetris.render2d;
 
 import static com.hexbit.tetris.Dimens.COMPONENT_PAD;
 import static com.hexbit.tetris.Dimens.GRIDHPX;
@@ -11,6 +11,10 @@ import com.hexbit.tetris.Utils;
 import com.hexbit.tetris.gui.FinishScreen;
 
 public abstract class SprintGame2D extends TetrisScreen2D {
+
+	public SprintGame2D(String imageFolderName) {
+		super(imageFolderName);
+	}
 
 	float time = 0;
 

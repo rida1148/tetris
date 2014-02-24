@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.render2d;
+package com.hexbit.tetris.render2d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 public class GraphicUtils {
 	public static void drawBox(ShapeRenderer shapeRenderer,Rectangle rect){

@@ -5,7 +5,6 @@ import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import java.util.ArrayList;
 
-import com.hexbit.tetris.modes.vector.TetrominoVector;
 
 public abstract class Matrix {
 
@@ -52,7 +51,7 @@ public abstract class Matrix {
 
 	boolean isValid(Tetromino tetromino, Point move) {
 		Point cPos = tetromino.getPos();
-		Tetromino tmp = new TetrominoVector(tetromino.getId());
+		Tetromino tmp = new Tetromino(tetromino.getId());
 		tmp.setCurrentRotationState(tetromino.getCurrentRotationState());
 		tmp.setPos(new Point(cPos.x + move.x, cPos.y + move.y));
 		return isValid(tmp);

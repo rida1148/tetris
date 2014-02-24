@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.render2d;
+package com.hexbit.tetris.render2d;
 
 import static com.hexbit.tetris.Dimens.*;
 
@@ -12,10 +12,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.hexbit.tetris.Matrix;
 
-public abstract class Matrix2D extends Matrix{
+public class Matrix2D extends Matrix{
 	Texture[] mCellTextures = new Texture[7];
-	
-	protected abstract String getImageFolderName();
 	
 //	public Matrix2D(Texture[] cellTextures) {
 //		for (int i = 0; i < cellTextures.length; i++) {
@@ -23,9 +21,9 @@ public abstract class Matrix2D extends Matrix{
 //		}
 //	}
 	
-	public Matrix2D(){
+	public Matrix2D(String imageFolderName){
 		for (int i = 0; i < mCellTextures.length; i++) {
-			mCellTextures[i] = new Texture(Gdx.files.internal(getImageFolderName()+"/"+i+".png"));
+			mCellTextures[i] = new Texture(Gdx.files.internal(imageFolderName+"/"+i+".png"));
 		}
 	}
 	

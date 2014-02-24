@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.threed;
+package com.hexbit.tetris.render3d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;

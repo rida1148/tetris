@@ -1,4 +1,4 @@
-package com.hexbit.tetris.modes.render2d;
+package com.hexbit.tetris.render2d;
 
 import static com.hexbit.tetris.Dimens.CELL;
 
@@ -10,22 +10,20 @@ import com.hexbit.tetris.Matrix;
 import com.hexbit.tetris.Point;
 import com.hexbit.tetris.Tetromino;
 
-public abstract class Tetromino2D extends Tetromino{
+public class Tetromino2D extends Tetromino{
 
 	final float GHOST_ALPHA = 0.3f;
 	
 	private Texture mCellTexture;
-	
-	protected abstract String getImageFolderName();
 
 	// for image grathics
-	public Tetromino2D(int id) {
+	private Tetromino2D(int id,String imageFolderName) {
 		super(id);
-		mCellTexture = new Texture(Gdx.files.internal(getImageFolderName()+"/"+id+".png")); 
+		mCellTexture = new Texture(Gdx.files.internal(imageFolderName+"/"+id+".png")); 
 	}
 
-	public Tetromino2D() {
-		this(random.nextInt(7));
+	public Tetromino2D(String imageFolderName) {
+		this(random.nextInt(7),imageFolderName);
 	}
 
 	public void draw(SpriteBatch sb, Matrix matrix) {

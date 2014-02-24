@@ -9,9 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.hexbit.tetris.modes.gem.MarathonModeGem;
 import com.hexbit.tetris.modes.gem.SprintModeGem;
-import com.hexbit.tetris.modes.glow.GlowScreen;
-import com.hexbit.tetris.modes.threed.Screen3D;
-import com.hexbit.tetris.modes.vector.VectorScreen;
+
 
 public class ModeSelector extends GuiScreen {
 	
