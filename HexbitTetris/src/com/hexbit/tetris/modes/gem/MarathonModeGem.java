@@ -10,6 +10,7 @@ import com.hexbit.tetris.render2d.MarathonScreen2D;
 public class MarathonModeGem extends MarathonScreen2D {
 	
 	public MarathonModeGem(String imageFolderName) {
+		
 		super(imageFolderName);
 	}
 

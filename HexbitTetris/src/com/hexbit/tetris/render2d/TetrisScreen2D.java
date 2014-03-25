@@ -53,6 +53,7 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		mMatrix = new Matrix2D(mImageFolderName);
 		mTetrominoStack = new TetrominoStack2D(mImageFolderName);
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
+		System.out.println(mCurrentTetromino.getId());
 		super.resetGame();
 	}
 
@@ -75,17 +76,17 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		((Matrix2D) mMatrix).draw(spriteBatch, shapeRenderer, MARGIN, MARGIN);
 
 		// score
-		GraphicUtils.drawBox(shapeRenderer, new Rectangle(MARGIN, GRIDHPX
+		GraphicUtils.drawBGBox(shapeRenderer, new Rectangle(MARGIN, GRIDHPX
 				+ MARGIN + COMPONENT_PAD, GRIDWPX, scoreFontHeight
 				+ COMPONENT_PAD));
 
 		// held bg
-		GraphicUtils.drawBox(shapeRenderer, new Rectangle(COMPONENT_PAD,
+		GraphicUtils.drawBGBox(shapeRenderer, new Rectangle(COMPONENT_PAD,
 				GRIDHPX, MARGIN - (COMPONENT_PAD * 2), MARGIN));
 
 		// next bg
 		GraphicUtils
-				.drawBox(shapeRenderer, new Rectangle(MARGIN + GRIDWPX
+				.drawBGBox(shapeRenderer, new Rectangle(MARGIN + GRIDWPX
 						+ COMPONENT_PAD, GRIDHPX, MARGIN - (COMPONENT_PAD * 2),
 						MARGIN));
 

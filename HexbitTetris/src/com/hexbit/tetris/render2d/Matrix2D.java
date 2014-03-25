@@ -38,7 +38,7 @@ public class Matrix2D extends Matrix{
 	}
 	
 	public void draw(SpriteBatch sb,ShapeRenderer shapeRenderer,int xOffset,int yOffset) {	
-		GraphicUtils.drawBox(shapeRenderer, new Rectangle(xOffset, yOffset, CELL*GRID_WIDTH, CELL*GRID_HEIGHT));
+		GraphicUtils.drawBGBox(shapeRenderer, new Rectangle(xOffset, yOffset, CELL*GRID_WIDTH, CELL*GRID_HEIGHT));
 		
 		sb.begin();
 		for (int y = 0; y < matrix.length; y++) {

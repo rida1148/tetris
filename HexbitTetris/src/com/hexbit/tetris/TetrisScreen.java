@@ -44,6 +44,7 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 
 	public void resetGame(){
 		alreadySwapped = false;
+		
 		setLevel(START_LEVEL);
 		lockDelayTimer.pause();
 		gameTime=0;
