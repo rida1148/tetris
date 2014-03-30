@@ -37,7 +37,7 @@ public class Tetromino {
 	public static Random random = new Random();
 
 	private boolean downHeld;
-
+	
 	public static enum Type {
 		I(0, Color.CYAN), O(1, Color.YELLOW), T(2, new Color(230, 230, 259, 0)), S(
 				3, Color.GREEN), Z(4, Color.RED), J(5, Color.BLUE), L(6,
@@ -140,6 +140,7 @@ public class Tetromino {
 	public void hardDrop(Matrix matrix) {
 		mPos = getHardDropPos(matrix);
 		addToMatrix(matrix);
+		
 	}
 
 	public Point getHardDropPos(Matrix matrix) {
@@ -224,6 +225,8 @@ public class Tetromino {
 		float speed = r * p;
 		return SPEED_MIN - speed; // invert cus smaller is faster
 	}
+	
+	
 
 	// ------------------------------------------------------------------------
 

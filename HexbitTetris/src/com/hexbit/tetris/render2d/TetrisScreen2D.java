@@ -24,11 +24,13 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 	protected BitmapFont gameFont;
 	protected BitmapFont scoreFont;
+	
 
 	protected int gameFontHeight;
 	protected int scoreFontHeight;
 
 	private String mImageFolderName;
+	private Notifys notifys;
 	
 	public TetrisScreen2D(String imageFolderName) {
 		mImageFolderName = imageFolderName;
@@ -42,10 +44,12 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		gameFont = new BitmapFont(Gdx.files.internal("font/gamefont.fnt"));
-		scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
+		scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));		
 
 		gameFontHeight = (int) gameFont.getCapHeight();
 		scoreFontHeight = (int) scoreFont.getCapHeight();
+		
+		notifys = new Notifys();
 	}
 
 	@Override
@@ -74,6 +78,7 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		drawBackground();
 
 		((Matrix2D) mMatrix).draw(spriteBatch, shapeRenderer, MARGIN, MARGIN);
+		mMatrix.update(delta);
 
 		// score
 		GraphicUtils.drawBGBox(shapeRenderer, new Rectangle(MARGIN, GRIDHPX
@@ -93,7 +98,7 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		// image only rendering so can call begin from here
 		// (there's no clashes with shape renderer)
 		spriteBatch.begin();
-		((Tetromino2D) mCurrentTetromino).draw(spriteBatch, mMatrix, MARGIN,
+		((Tetromino2D) mCurrentTetromino).draw(spriteBatch,shapeRenderer, mMatrix, MARGIN,
 				MARGIN);
 
 		((Tetromino2D) mTetrominoStack.peekNextPiece()).draw(spriteBatch,
@@ -126,6 +131,9 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 				+ (GRIDHPX / 2) - scoreFontHeight);
 
 		spriteBatch.end();
+		
+		notifys.draw(spriteBatch);
+		notifys.update(delta);
 	}
 
 	protected void drawBackground() {
@@ -143,6 +151,7 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		((TetrominoStack2D) mTetrominoStack).dispose();
 		gameFont.dispose();
 		scoreFont.dispose();
+		notifys.dispose();
 	}
 
 	@Override
@@ -163,6 +172,15 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 	@Override
 	public boolean keyTyped(char character) {
+		if(character == 't'){
+			notifys.addNotification("this is a long notificaion", 5);
+			notifys.addNotification("this is a short notificaion", 1);
+		}
+		else if(character == 'd'){
+			//set breakpoint here
+			int a = 3;
+			a = CELL;
+		}
 		return false;
 	}
 

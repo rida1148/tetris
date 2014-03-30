@@ -1,30 +1,27 @@
 package com.hexbit.tetris.render2d;
 
-import static com.hexbit.tetris.Dimens.*;
+import static com.hexbit.tetris.Dimens.CELL;
+import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
+import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.hexbit.tetris.Matrix;
 
 public class Matrix2D extends Matrix{
-	Texture[] mCellTextures = new Texture[7];
 	
-//	public Matrix2D(Texture[] cellTextures) {
-//		for (int i = 0; i < cellTextures.length; i++) {
-//			mCellTextures[i] = cellTextures[i];
-//		}
-//	}
+	Texture[] mCellTextures = new Texture[7];
+	private Notifys notifys;
+	
 	
 	public Matrix2D(String imageFolderName){
 		for (int i = 0; i < mCellTextures.length; i++) {
 			mCellTextures[i] = new Texture(Gdx.files.internal(imageFolderName+"/"+i+".png"));
 		}
+		notifys = new Notifys();
 	}
 	
 	public void draw(SpriteBatch sb) {
@@ -50,12 +47,28 @@ public class Matrix2D extends Matrix{
 		}
 		sb.end();
 		
+		for (int i = 0; i < linesToBeAnimated.size(); i++) {
+			linesToBeAnimated.get(i).animate(shapeRenderer,xOffset,yOffset);
+		}
+		
+	}
+	
+
+	public int checkClears(ShapeRenderer shapeRenderer , int level) {
+		int lines = checkClears(level);
+		if(lines == 3){
+			notifys.addNotification("Triple!", 3);
+		}else if(lines == 4){
+			notifys.addNotification("Tetris !", 3);
+		}
+		return lines;
 	}
 	
 	public void dispose() {
 		for (int i = 0; i < mCellTextures.length; i++) {
 			mCellTextures[i].dispose();
 		}
+		notifys.dispose();
 
 	}
 

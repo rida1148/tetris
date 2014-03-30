@@ -1,10 +1,13 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
-import static com.hexbit.tetris.Dimens.GRID_WIDTH;
+import static com.hexbit.tetris.Dimens.*;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.hexbit.tetris.render2d.GraphicUtils;
 
 public abstract class Matrix {
 
@@ -12,6 +15,44 @@ public abstract class Matrix {
 
 	private int score = 0;
 	private int mLineCount = 0;
+
+	protected ArrayList<Line> linesToBeAnimated = new ArrayList<Line>();
+
+	// This class holds a line on the stack ready to be removed
+	// before it animates itself.
+	public class Line {
+		final public static float animationTime = 1;
+		//a number below 1 that holds the alpha start
+		final public static float animationIntensity = 0.3f;
+		Timer timer;
+		int yPos;
+
+		public Line(int y) {
+			yPos = y;
+			timer = new Timer(animationTime);
+		}
+
+		public boolean doneAnimating() {
+			return timer.isFinished();
+		}
+
+		public int getY() {
+			return yPos;
+		}
+
+		public void animate(ShapeRenderer shapeRenderer, int xOffset, int yOffset) {
+			GraphicUtils.enableAlpha();
+
+			shapeRenderer.begin(ShapeType.Filled);
+			shapeRenderer.setColor(new Color(1, 1, 1,
+					animationIntensity - (animationIntensity * timer.getProgressPercent())));
+			shapeRenderer.rect(xOffset, yPos * CELL + yOffset, CELL
+					* Dimens.GRID_WIDTH, CELL);
+			shapeRenderer.end();
+			GraphicUtils.disableAlpha();
+
+		}
+	}
 
 	void debugLoad() {
 		for (int y = 0; y < 5; y++) {
@@ -122,7 +163,7 @@ public abstract class Matrix {
 		return false;
 	}
 
-	public int checkClears(int level) {
+	protected int checkClears(int level) {
 		// find all lines that are full
 		ArrayList<Integer> fullLines = new ArrayList<Integer>();
 		for (int i = matrix.length - 1; i >= 0; i--) {
@@ -145,32 +186,48 @@ public abstract class Matrix {
 		// draw(sr);
 		int totalLines = 0;
 
+		// shift down all lines at cleared line and above to
+		// over write it
 		for (int i = 0; i < fullLines.size(); i++) {
 			for (int y = fullLines.get(i); y < matrix.length - 1; y++) {
 				shiftGridDownTo(y);
 			}
+			linesToBeAnimated.add(new Line(fullLines.get(i)));
 			mLineCount++;
 			totalLines++;
+
 		}
-		increaseScore(totalLines,level);
-		
+		increaseScore(totalLines, level);
+
 		return totalLines;
 	}
 
+	public void update(float delta) {
+		for (int i = 0; i < linesToBeAnimated.size(); i++) {
+			linesToBeAnimated.get(i).timer.tick(delta);
+		}
+		for (int i = linesToBeAnimated.size() - 1; i >= 0; i--) {
+			if (linesToBeAnimated.get(i).doneAnimating()) {
+				linesToBeAnimated.remove(i);
+			}
+		}
+
+	}
+
 	// score algorythm
-	private void increaseScore(int lines,int level) {
+	private void increaseScore(int lines, int level) {
 		switch (lines) {
 		case 1:
-			score += level*40+40;
+			score += level * 40 + 40;
 			break;
 		case 2:
-			score += level*100+100;
+			score += level * 100 + 100;
 			break;
 		case 3:
-			score += level*300+300;
+			score += level * 300 + 300;
 			break;
 		case 4:
-			score += level*1200+1200;
+			score += level * 1200 + 1200;
 			break;
 		default:
 			break;

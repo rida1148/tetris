@@ -3,11 +3,14 @@ package com.hexbit.tetris.render2d;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 
 public class GraphicUtils {
+	
 	public static void drawBGBox(ShapeRenderer shapeRenderer,Rectangle rect){
 		//transparent bg
 		shapeRenderer.setColor(new Color(.1f, .1f, .1f, .3f));
@@ -23,11 +26,17 @@ public class GraphicUtils {
 		shapeRenderer.end();
 	}
 	public static void drawBorderBox(ShapeRenderer shapeRenderer,Rectangle rect){
-		
+		//TODO draw border box
 	}
-	public static void notify(String text){
-		//TODO this notify method 
-		//slide down while fading
+	
+	public static void enableAlpha(){
+		Gdx.gl.glEnable(GL10.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 	}
+	public static void disableAlpha() {
+		Gdx.gl.glDisable(GL10.GL_BLEND);
+	}
+	
+	
 	
 }

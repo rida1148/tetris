@@ -15,7 +15,7 @@ public class Tetris extends Game {
 		//setScreen(new VectorScreen());
 		//setScreen(new GlowScreen());
 		//setScreen(new Screen3D());
-		setScreen(new MainMenu());
-		//setScreen(new SprintModeGem());
+	//	setScreen(new MainMenu());
+		setScreen(new SprintModeGem());
 	}
 }

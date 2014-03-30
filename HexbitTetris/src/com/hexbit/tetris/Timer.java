@@ -39,5 +39,12 @@ public class Timer {
 	public float getCurrentTime(){
 		return mCurrentTime;
 	}
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
+	public float getProgressPercent(){
+		return mCurrentTime/mFinishTime;
+	}
 	
 }
