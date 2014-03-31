@@ -20,17 +20,13 @@ public class Tetromino2D extends Tetromino {
 
 	private Texture mCellTexture;
 
-	Timer hardDropAnimation = new Timer(4);
-
-	// alpha start from 0 to 1
-	final float hardDropAnimationIntensity = 1;
-
+	Timer timer = new Timer(2);
 
 	private Tetromino2D(int id, String imageFolderName) {
 		super(id);
 		mCellTexture = new Texture(Gdx.files.internal(imageFolderName + "/"
 				+ id + ".png"));
-		hardDropAnimation.pause();
+		timer.pause();
 	}
 
 	public Tetromino2D(String imageFolderName) {
@@ -70,20 +66,7 @@ public class Tetromino2D extends Tetromino {
 
 			sb.setColor(c.r, c.g, c.b, 1f);
 		}
-		//System.out.println(hardDropAnimation.isEnabled());
-		if (hardDropAnimation.isEnabled()) {
-			System.out.println("HELP!!!");
-			shapeRenderer.setColor(new Color(1, 1, 1,
-					hardDropAnimationIntensity
-							- (hardDropAnimationIntensity * hardDropAnimation
-									.getProgressPercent())));
-			shapeRenderer.begin(ShapeType.Filled);
-			shapeRenderer.rect((float) mPos.x, (float) mPos.y, (float) mPos.x
-					* CELL + yOffset, CELL * 20);
-			shapeRenderer.end();
-		}
-
-		GraphicUtils.disableAlpha();
+		
 	}
 
 	public void draw(SpriteBatch sb, Point pos) {
@@ -99,27 +82,27 @@ public class Tetromino2D extends Tetromino {
 			}
 		}
 	}
-
+	
 	@Override
 	public void update(Matrix matrix, float delta) {
+		timer.tick(delta);
+		
+		if(timer.isFinished()){
+			timer.pause();
+		}
 		super.update(matrix, delta);
-		hardDropAnimation.tick(delta);
-
-		// if(hardDropAnimation.isFinished()){
-		// hardDropAnimation.reset();
-		// hardDropAnimation.pause();
-		// }
 	}
 	
 	@Override
 	public void hardDrop(Matrix matrix) {
-		hardDropAnimation.reset();
-		hardDropAnimation.start();
-		System.out.println(hardDropAnimation.isEnabled() + " WTF ");
+		timer.reset();
+		timer.start();
 		super.hardDrop(matrix);
 	}
 
 	public void dispose() {
 		mCellTexture.dispose();
 	}
+	
+
 }

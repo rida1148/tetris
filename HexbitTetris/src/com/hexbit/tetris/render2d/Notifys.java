@@ -18,6 +18,8 @@ public class Notifys implements Disposable {
 	ArrayList<Notification> notifications = new ArrayList<Notification>();
 
 	private BitmapFont notificationFont;
+	
+	public Color color = Color.WHITE;
 
 	class Notification {
 		public static final float alphaIntensity = 0.8f;
@@ -44,6 +46,12 @@ public class Notifys implements Disposable {
 		public void draw(SpriteBatch spriteBatch) {
 			GraphicUtils.enableAlpha();
 
+		//	System.out.println(color.r+"  "+ color.g+"  "+  color.b);
+			System.out.println(text);
+			
+			notificationFont.setColor(color.r, color.g, color.b, alphaIntensity
+					- (alphaIntensity * timer.getProgressPercent()));
+			
 			notificationFont.setColor(1, 1, 1, alphaIntensity
 					- (alphaIntensity * timer.getProgressPercent()));
 
@@ -61,6 +69,7 @@ public class Notifys implements Disposable {
 	public Notifys() {
 		notificationFont = new BitmapFont(
 				Gdx.files.internal("font/notification.fnt"));
+		notificationFont.setScale(80);
 	}
 
 	// TODO make sure notifications don't overlap
@@ -85,7 +94,6 @@ public class Notifys implements Disposable {
 			notifications.get(i).yOffset -= Notification.fallSpeed;
 			if (notifications.get(i).getTimer().isFinished()) {
 				notifications.remove(i);
-				System.out.println("notificaion removed");
 			}
 		}
 

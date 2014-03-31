@@ -74,8 +74,8 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 		spriteBatch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
-
-		drawBackground();
+		
+	//	drawBackground();
 
 		((Matrix2D) mMatrix).draw(spriteBatch, shapeRenderer, MARGIN, MARGIN);
 		mMatrix.update(delta);
@@ -134,13 +134,23 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		
 		notifys.draw(spriteBatch);
 		notifys.update(delta);
+		
+		
 	}
-
-	protected void drawBackground() {
+	
+	final float NOTIFICATION_LENGTH = 1.5f;
+	
+	@Override
+	protected void onBackToBackComboBeaten() {
+		notifys.addNotification("new max combo!" +biggestBackToBacks, NOTIFICATION_LENGTH);
 	}
-
-	protected void drawOnTop() {
+	
+	@Override
+	protected void onBackToBackComboIncrease() {
+		notifys.addNotification("Combo x"+currentBackToBacks, 0.5f);
 	}
+	
+	protected abstract void drawBackground();
 
 	@Override
 	public void dispose() {

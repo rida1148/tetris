@@ -32,8 +32,8 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	protected int mLevel;
 	boolean alreadySwapped;
 	
-	int biggestBackToBacks = 0;
-	int currentBackToBacks = 0;
+	protected int biggestBackToBacks = 0;
+	protected int currentBackToBacks = 0;
 	
 	boolean tetrominoJustAppended = false;
 	protected boolean firstReset = true;
@@ -41,6 +41,10 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 	float gameTime = 0;
 
 	abstract public void load();
+	
+	abstract protected void onBackToBackComboIncrease();
+	//when user beats their biggest back to back in the current game
+	abstract protected void onBackToBackComboBeaten();
 
 	public void resetGame(){
 		alreadySwapped = false;
@@ -87,14 +91,17 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		if(tetrominoJustAppended){
 			if(clears > 0){
 				currentBackToBacks += clears;
+				if (clears > 1) {
+					onBackToBackComboIncrease();
+				}
+				
 			}else{
 				if(currentBackToBacks > biggestBackToBacks){
 					biggestBackToBacks = currentBackToBacks;
-					System.out.println(biggestBackToBacks);
-					//TODO show user 
-				}
-				if(currentBackToBacks >= 2){
-					//TODO award points and show user via notification class
+					if(biggestBackToBacks > 1){
+						onBackToBackComboBeaten();
+					}
+					
 				}
 				currentBackToBacks = 0;
 			}
@@ -170,7 +177,8 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		} else if (keycode == Keys.DOWN) {
 			mCurrentTetromino.setDownHeld(true);
 		} else if (keycode == Keys.ESCAPE) {
-			((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+			//((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+			Gdx.app.exit();
 		}
 		return false;
 	}

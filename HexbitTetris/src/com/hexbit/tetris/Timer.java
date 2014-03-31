@@ -19,7 +19,7 @@ public class Timer {
 	}
 	
 	public boolean isFinished(){
-		if(mCurrentTime >= mFinishTime){
+		if(mCurrentTime > mFinishTime){
 			return true;
 		}
 		return false;
@@ -32,6 +32,7 @@ public class Timer {
 	public void pause(){
 		enabled = false;
 	}
+	
 	public void start(){
 		enabled = true;
 	}
@@ -45,6 +46,10 @@ public class Timer {
 	
 	public float getProgressPercent(){
 		return mCurrentTime/mFinishTime;
+	}
+	
+	public float getFinishTime() {
+		return mFinishTime;
 	}
 	
 }

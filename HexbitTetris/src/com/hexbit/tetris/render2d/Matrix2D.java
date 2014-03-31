@@ -5,6 +5,7 @@ import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
 import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,14 +15,15 @@ import com.hexbit.tetris.Matrix;
 public class Matrix2D extends Matrix{
 	
 	Texture[] mCellTextures = new Texture[7];
-	private Notifys notifys;
 	
+	private Notifys notifys;
 	
 	public Matrix2D(String imageFolderName){
 		for (int i = 0; i < mCellTextures.length; i++) {
 			mCellTextures[i] = new Texture(Gdx.files.internal(imageFolderName+"/"+i+".png"));
 		}
 		notifys = new Notifys();
+		notifys.color = new Color(0, 1, 0, 1);
 	}
 	
 	public void draw(SpriteBatch sb) {
@@ -51,15 +53,22 @@ public class Matrix2D extends Matrix{
 			linesToBeAnimated.get(i).animate(shapeRenderer,xOffset,yOffset);
 		}
 		
+		notifys.draw(sb);
+		
+	}
+	@Override
+	public void update(float delta) {
+		super.update(delta);
+		notifys.update(delta);
 	}
 	
-
-	public int checkClears(ShapeRenderer shapeRenderer , int level) {
-		int lines = checkClears(level);
+	@Override
+	protected int checkClears(int level) {
+		int lines = super.checkClears(level);
 		if(lines == 3){
-			notifys.addNotification("Triple!", 3);
+			notifys.addNotification("Triple!", 1);
 		}else if(lines == 4){
-			notifys.addNotification("Tetris !", 3);
+			notifys.addNotification("Tetris !", 1);
 		}
 		return lines;
 	}

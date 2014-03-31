@@ -19,19 +19,18 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.hexbit.tetris.TetrisScreen;
 
-public class Screen3D extends TetrisScreen{
+public class Screen3D extends TetrisScreen {
 	PerspectiveCamera camera;
 
 	public Model model;
 	public ModelInstance instance;
 
 	private ModelBatch modelBatch;
-	
+
 	ShapeRenderer shapeRenderer;
 
 	Environment environment;
-	
-	
+
 	@Override
 	public void load() {
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
@@ -55,20 +54,20 @@ public class Screen3D extends TetrisScreen{
 				0.4f, 0.4f, 1f));
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f,
 				-0.8f, -0.2f));
-		
+
 		shapeRenderer = new ShapeRenderer();
-		
-		Gdx.input.setInputProcessor(new InputMultiplexer(this,new CameraInputController(camera)));
-        
+
+		Gdx.input.setInputProcessor(new InputMultiplexer(this,
+				new CameraInputController(camera)));
+
 	}
-	
 
 	@Override
 	public void resetGame() {
 		mMatrix = new Matrix3D();
 		mTetrominoStack = new TetrominoStack3D();
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
-		
+
 	}
 
 	@Override
@@ -76,32 +75,30 @@ public class Screen3D extends TetrisScreen{
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		
+
 		gameLogic(delta);
-		
+
 		camera.update();
-		
+
 		shapeRenderer.setProjectionMatrix(camera.combined);
-		//shapeRenderer.setTransformMatrix(camera.view);
-		//shapeRenderer.setProjectionMatrix(camera.projection);
-		
-		
-		((Matrix3D)mMatrix).drawGrid(shapeRenderer);
-	
-		
+		// shapeRenderer.setTransformMatrix(camera.view);
+		// shapeRenderer.setProjectionMatrix(camera.projection);
+
+		((Matrix3D) mMatrix).drawGrid(shapeRenderer);
+
 		modelBatch.begin(camera);
-		((Matrix3D)mMatrix).draw(modelBatch,environment);
+		((Matrix3D) mMatrix).draw(modelBatch, environment);
 		((Tetromino3D) mCurrentTetromino).draw(modelBatch, environment);
-		
+
 		modelBatch.end();
-		
-		if(Gdx.input.isKeyPressed(Keys.X)){
-			camera.direction.x+=.001f;
-		}else if(Gdx.input.isKeyPressed(Keys.Y)){
-			camera.direction.y+=.001f;
-		}else if(Gdx.input.isKeyPressed(Keys.Z)){
-			camera.direction.z+=.001f;
-		}else if(Gdx.input.isKeyPressed(Keys.SPACE)){
+
+		if (Gdx.input.isKeyPressed(Keys.X)) {
+			camera.direction.x += .001f;
+		} else if (Gdx.input.isKeyPressed(Keys.Y)) {
+			camera.direction.y += .001f;
+		} else if (Gdx.input.isKeyPressed(Keys.Z)) {
+			camera.direction.z += .001f;
+		} else if (Gdx.input.isKeyPressed(Keys.SPACE)) {
 			System.out.println(camera.position.toString());
 			System.out.println(camera.direction.toString());
 			System.out.println(camera.combined.toString());
@@ -114,9 +111,8 @@ public class Screen3D extends TetrisScreen{
 	public void dispose() {
 		model.dispose();
 		shapeRenderer.dispose();
-		((Tetromino3D)mCurrentTetromino).dispose();
+		((Tetromino3D) mCurrentTetromino).dispose();
 	}
-
 
 	@Override
 	public void resize(int width, int height) {
@@ -139,34 +135,36 @@ public class Screen3D extends TetrisScreen{
 		return false;
 	}
 
-
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
-
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
 
-
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		return false;
 	}
-
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		return false;
 	}
 
-
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
 	}
 
+	@Override
+	protected void onBackToBackComboIncrease() {
+	}
+
+	@Override
+	protected void onBackToBackComboBeaten() {
+	}
 }
