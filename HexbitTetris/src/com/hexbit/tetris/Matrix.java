@@ -1,12 +1,16 @@
 package com.hexbit.tetris;
 
-import static com.hexbit.tetris.Dimens.*;
+import static com.hexbit.tetris.Dimens.CELL;
+import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
+import static com.hexbit.tetris.Dimens.GRID_WIDTH;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.hexbit.tetris.render2d.Animation;
+import com.hexbit.tetris.render2d.AnimationBatch;
 import com.hexbit.tetris.render2d.GraphicUtils;
 
 public abstract class Matrix {
@@ -16,36 +20,31 @@ public abstract class Matrix {
 	private int score = 0;
 	private int mLineCount = 0;
 
-	protected ArrayList<Line> linesToBeAnimated = new ArrayList<Line>();
+	public AnimationBatch animationBatch = new AnimationBatch();
 
-	// This class holds a line on the stack ready to be removed
-	// before it animates itself.
-	public class Line {
+	public class LineClearAnimation extends Animation {
 		final public static float animationTime = 1;
-		//a number below 1 that holds the alpha start
+		// a number below 1 that holds the alpha start - will determine
+		// transparency
 		final public static float animationIntensity = 0.3f;
-		Timer timer;
 		int yPos;
 
-		public Line(int y) {
+		public LineClearAnimation(int y) {
+			super(animationTime);
 			yPos = y;
-			timer = new Timer(animationTime);
-		}
-
-		public boolean doneAnimating() {
-			return timer.isFinished();
 		}
 
 		public int getY() {
 			return yPos;
 		}
 
-		public void animate(ShapeRenderer shapeRenderer, int xOffset, int yOffset) {
+		public void animate(ShapeRenderer shapeRenderer, int xOffset,
+				int yOffset) {
 			GraphicUtils.enableAlpha();
 
 			shapeRenderer.begin(ShapeType.Filled);
-			shapeRenderer.setColor(new Color(1, 1, 1,
-					animationIntensity - (animationIntensity * timer.getProgressPercent())));
+			shapeRenderer.setColor(new Color(1, 1, 1, animationIntensity
+					- (animationIntensity * mTimer.getProgressPercent())));
 			shapeRenderer.rect(xOffset, yPos * CELL + yOffset, CELL
 					* Dimens.GRID_WIDTH, CELL);
 			shapeRenderer.end();
@@ -183,8 +182,6 @@ public abstract class Matrix {
 				matrix[fullLines.get(i)][j] = 0;
 			}
 		}
-		// draw(sr);
-		int totalLines = 0;
 
 		// shift down all lines at cleared line and above to
 		// over write it
@@ -192,26 +189,17 @@ public abstract class Matrix {
 			for (int y = fullLines.get(i); y < matrix.length - 1; y++) {
 				shiftGridDownTo(y);
 			}
-			linesToBeAnimated.add(new Line(fullLines.get(i)));
+			animationBatch.add(new LineClearAnimation(fullLines.get(i)));
 			mLineCount++;
-			totalLines++;
 
 		}
-		increaseScore(totalLines, level);
+		increaseScore(fullLines.size(), level);
 
-		return totalLines;
+		return fullLines.size();
 	}
 
 	public void update(float delta) {
-		for (int i = 0; i < linesToBeAnimated.size(); i++) {
-			linesToBeAnimated.get(i).timer.tick(delta);
-		}
-		for (int i = linesToBeAnimated.size() - 1; i >= 0; i--) {
-			if (linesToBeAnimated.get(i).doneAnimating()) {
-				linesToBeAnimated.remove(i);
-			}
-		}
-
+		animationBatch.update(delta);
 	}
 
 	// score algorythm

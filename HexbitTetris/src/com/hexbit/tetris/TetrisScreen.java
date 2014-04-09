@@ -50,7 +50,8 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 		alreadySwapped = false;
 		
 		setLevel(START_LEVEL);
-		lockDelayTimer.pause();
+		lockDelayTimer.setEnabled(false);
+		
 		gameTime=0;
 		firstReset = false;
 	}
@@ -72,9 +73,9 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			if (mMatrix.isValid(mCurrentTetromino, Tetromino.DOWN)) {
 				mCurrentTetromino.move(Tetromino.DOWN);
 				lockDelayTimer.reset();
-				lockDelayTimer.pause();
+				lockDelayTimer.setEnabled(false);
 			} else {
-				lockDelayTimer.start();
+				lockDelayTimer.setEnabled(true);
 				if(lockDelayTimer.isFinished()){
 					mCurrentTetromino.addToMatrix(mMatrix);
 					tetrominoJustAppended = true;
@@ -189,11 +190,11 @@ public abstract class TetrisScreen implements Screen, InputProcessor {
 			mCurrentTetromino.setDownHeld(false);
 		} else if (keycode == Keys.LEFT) {
 			mCurrentTetromino.getLeftHeldTimer().reset();
-			mCurrentTetromino.getLeftHeldTimer().pause();
+			mCurrentTetromino.getLeftHeldTimer().setEnabled(false);
 			madeLeftMove = false;
 		} else if (keycode == Keys.RIGHT) {
 			mCurrentTetromino.getRightHeldTimer().reset();
-			mCurrentTetromino.getRightHeldTimer().pause();
+			mCurrentTetromino.getRightHeldTimer().setEnabled(false);
 			madeRightMove = false;
 		} // hold
 		else if (Keys.C == keycode) {

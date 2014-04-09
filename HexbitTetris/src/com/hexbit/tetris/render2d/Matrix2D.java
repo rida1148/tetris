@@ -49,9 +49,7 @@ public class Matrix2D extends Matrix{
 		}
 		sb.end();
 		
-		for (int i = 0; i < linesToBeAnimated.size(); i++) {
-			linesToBeAnimated.get(i).animate(shapeRenderer,xOffset,yOffset);
-		}
+		animationBatch.animateAll(shapeRenderer, xOffset, yOffset);
 		
 		notifys.draw(sb);
 		

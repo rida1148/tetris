@@ -29,12 +29,8 @@ public class Timer {
 		mCurrentTime = 0;
 	}
 	
-	public void pause(){
-		enabled = false;
-	}
-	
-	public void start(){
-		enabled = true;
+	public void setEnabled(boolean enabled){
+		this.enabled = enabled;
 	}
 	
 	public float getCurrentTime(){

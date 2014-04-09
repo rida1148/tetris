@@ -14,12 +14,20 @@ import com.hexbit.tetris.Timer;
  * @author brett class for rendering list of animated notifications like when
  *         you get a tetris
  */
+//TODO update this to new animation class
 public class Notifys implements Disposable {
 	ArrayList<Notification> notifications = new ArrayList<Notification>();
 
 	private BitmapFont notificationFont;
-	
+
 	public Color color = Color.WHITE;
+
+	public Notifys() {
+		notificationFont = new BitmapFont(
+				Gdx.files.internal("font/notification.fnt"));
+		//notificationFont.setScale(0.8f);
+		
+	}
 
 	class Notification {
 		public static final float alphaIntensity = 0.8f;
@@ -46,30 +54,28 @@ public class Notifys implements Disposable {
 		public void draw(SpriteBatch spriteBatch) {
 			GraphicUtils.enableAlpha();
 
-		//	System.out.println(color.r+"  "+ color.g+"  "+  color.b);
-			System.out.println(text);
-			
+			// System.out.println(color.r+"  "+ color.g+"  "+ color.b);
+			// System.out.println(text);
+
 			notificationFont.setColor(color.r, color.g, color.b, alphaIntensity
 					- (alphaIntensity * timer.getProgressPercent()));
-			
-			notificationFont.setColor(1, 1, 1, alphaIntensity
-					- (alphaIntensity * timer.getProgressPercent()));
+
+			// notificationFont.setColor(1, 1, 1, alphaIntensity
+			// - (alphaIntensity * timer.getProgressPercent()));
 
 			spriteBatch.begin();
-			notificationFont.draw(spriteBatch, text, (Gdx.graphics.getWidth()
-					/ 2) - ((notificationFont.getSpaceWidth() * text.length()) / 2),
-					Gdx.graphics.getHeight() / 2 + yOffset);
+			notificationFont.draw(
+					spriteBatch,
+					text,
+					(Gdx.graphics.getWidth() / 2)
+							- ((notificationFont.getSpaceWidth() * text
+									.length()) / 2), Gdx.graphics.getHeight()
+							/ 2 + yOffset);
 			spriteBatch.end();
 
 			GraphicUtils.disableAlpha();
 		}
 
-	}
-
-	public Notifys() {
-		notificationFont = new BitmapFont(
-				Gdx.files.internal("font/notification.fnt"));
-		notificationFont.setScale(80);
 	}
 
 	// TODO make sure notifications don't overlap

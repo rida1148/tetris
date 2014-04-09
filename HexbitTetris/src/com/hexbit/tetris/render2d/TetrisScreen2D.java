@@ -1,21 +1,25 @@
 package com.hexbit.tetris.render2d;
 
-import static com.hexbit.tetris.Dimens.*;
-
-import java.awt.Font;
+import static com.hexbit.tetris.Dimens.CELL;
+import static com.hexbit.tetris.Dimens.COMPONENT_PAD;
+import static com.hexbit.tetris.Dimens.GRIDHPX;
+import static com.hexbit.tetris.Dimens.GRIDWPX;
+import static com.hexbit.tetris.Dimens.GRID_HEIGHT;
+import static com.hexbit.tetris.Dimens.GRID_WIDTH;
+import static com.hexbit.tetris.Dimens.MARGIN;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
-import com.hexbit.tetris.Matrix;
 import com.hexbit.tetris.Point;
 import com.hexbit.tetris.TetrisScreen;
-import com.hexbit.tetris.Tetromino;
-import com.hexbit.tetris.TetrominoStack;
 
 public abstract class TetrisScreen2D extends TetrisScreen {
 	protected OrthographicCamera camera;
@@ -24,14 +28,45 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 	protected BitmapFont gameFont;
 	protected BitmapFont scoreFont;
-	
 
 	protected int gameFontHeight;
 	protected int scoreFontHeight;
 
 	private String mImageFolderName;
 	private Notifys notifys;
-	
+
+	private AnimationBatch hardDropAnimations;
+
+	// class to hold a hard drop animation
+	class HardDropAnimation extends Animation {
+		int startX, startY;
+		int width, height;
+		private Color baseColor = Color.WHITE;
+		private final float alphaIntensity = 0.25f;
+		private final static float SPEED = 0.3f;
+
+		public HardDropAnimation(int x, int y, int w, int h) {
+			super(SPEED);
+			startX = x;
+			startY = y;
+			width = w;
+			height = h;
+		}
+
+		@Override
+		public void animate(ShapeRenderer shapeRenderer, int xOffset,
+				int yOffset) {
+			GraphicUtils.enableAlpha();
+			shapeRenderer.setColor(baseColor.r, baseColor.g, baseColor.b, alphaIntensity 
+					- (alphaIntensity * mTimer.getProgressPercent()));
+			shapeRenderer.begin(ShapeType.Filled);
+			float fall = startY * mTimer.getProgressPercent();
+			shapeRenderer.rect(startX+xOffset,startY-fall+yOffset,width,height);
+			shapeRenderer.end();
+		}
+
+	}
+
 	public TetrisScreen2D(String imageFolderName) {
 		mImageFolderName = imageFolderName;
 	}
@@ -44,11 +79,11 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		camera.setToOrtho(false, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		gameFont = new BitmapFont(Gdx.files.internal("font/gamefont.fnt"));
-		scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));		
+		scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
 
 		gameFontHeight = (int) gameFont.getCapHeight();
 		scoreFontHeight = (int) scoreFont.getCapHeight();
-		
+
 		notifys = new Notifys();
 	}
 
@@ -57,6 +92,7 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		mMatrix = new Matrix2D(mImageFolderName);
 		mTetrominoStack = new TetrominoStack2D(mImageFolderName);
 		mCurrentTetromino = mTetrominoStack.getNextPiece();
+		hardDropAnimations = new AnimationBatch();
 		System.out.println(mCurrentTetromino.getId());
 		super.resetGame();
 	}
@@ -74,8 +110,8 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 		spriteBatch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
-		
-	//	drawBackground();
+
+		drawBackground();
 
 		((Matrix2D) mMatrix).draw(spriteBatch, shapeRenderer, MARGIN, MARGIN);
 		mMatrix.update(delta);
@@ -98,8 +134,8 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 		// image only rendering so can call begin from here
 		// (there's no clashes with shape renderer)
 		spriteBatch.begin();
-		((Tetromino2D) mCurrentTetromino).draw(spriteBatch,shapeRenderer, mMatrix, MARGIN,
-				MARGIN);
+		((Tetromino2D) mCurrentTetromino).draw(spriteBatch, shapeRenderer,
+				mMatrix, MARGIN, MARGIN);
 
 		((Tetromino2D) mTetrominoStack.peekNextPiece()).draw(spriteBatch,
 				new Point(GRID_WIDTH * CELL + MARGIN + COMPONENT_PAD,
@@ -131,25 +167,28 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 				+ (GRIDHPX / 2) - scoreFontHeight);
 
 		spriteBatch.end();
-		
+
 		notifys.draw(spriteBatch);
 		notifys.update(delta);
-		
-		
+		hardDropAnimations.animateAll(shapeRenderer, MARGIN, MARGIN);
+		hardDropAnimations.update(delta);
+		System.out.println(mCurrentTetromino.getWidth());
+
 	}
-	
+
 	final float NOTIFICATION_LENGTH = 1.5f;
-	
+
 	@Override
 	protected void onBackToBackComboBeaten() {
-		notifys.addNotification("new max combo!" +biggestBackToBacks, NOTIFICATION_LENGTH);
+		notifys.addNotification("new max combo!" + biggestBackToBacks,
+				NOTIFICATION_LENGTH);
 	}
-	
+
 	@Override
 	protected void onBackToBackComboIncrease() {
-		notifys.addNotification("Combo x"+currentBackToBacks, 0.5f);
+		notifys.addNotification("Combo x" + currentBackToBacks, 0.5f);
 	}
-	
+
 	protected abstract void drawBackground();
 
 	@Override
@@ -182,16 +221,28 @@ public abstract class TetrisScreen2D extends TetrisScreen {
 
 	@Override
 	public boolean keyTyped(char character) {
-		if(character == 't'){
+		if (character == 't') {
 			notifys.addNotification("this is a long notificaion", 5);
 			notifys.addNotification("this is a short notificaion", 1);
-		}
-		else if(character == 'd'){
-			//set breakpoint here
+		} else if (character == 'd') {
+			// set breakpoint here
 			int a = 3;
 			a = CELL;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		if(keycode == Keys.SPACE){
+			int width = mCurrentTetromino.getShape()[0].length*CELL;
+			hardDropAnimations.add(new HardDropAnimation(
+					mCurrentTetromino.getPos().x*CELL, mCurrentTetromino.getPos().y*CELL,
+					width, mCurrentTetromino
+							.getShape().length*CELL));
+		}
+		
+		return super.keyDown(keycode);
 	}
 
 	@Override

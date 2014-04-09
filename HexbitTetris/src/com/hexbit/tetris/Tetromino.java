@@ -68,8 +68,8 @@ public class Tetromino {
 		mCurrentRotationState = 0;
 		rotationStates = RotationStateList.values()[id].getRotationStates();
 		reset();
-		leftHeldTimer.pause();
-		rightHeldTimer.pause();
+		leftHeldTimer.setEnabled(false);
+		rightHeldTimer.setEnabled(false);
 	}
 
 	private Tetromino(Tetromino tetromino) {
@@ -225,16 +225,48 @@ public class Tetromino {
 		float speed = r * p;
 		return SPEED_MIN - speed; // invert cus smaller is faster
 	}
+
+	/***
+	 * TODO get shape width
+	 *  xxx
+	 * xxx
+	 * this is has a width of 4 even though the 
+	 * rows have a width of 3
+	 * 
+	 */
+	public int getWidth(){
+		int[][] shape = getShape();
+		int width = 0;
+		for (int i = 0; i < shape.length; i++) {
+			int smallest = 999;
+			int biggest = -1;
+			for (int j = 0; j < shape[i].length; j++) {
+				if(shape[i][j] == 1){
+					if(shape[i][j] < smallest){
+						smallest =shape[i][j]; 
+					}
+					if(shape[i][j] > biggest){
+						biggest = shape[i][j]; 
+					}
+				}
+			}
+			int cwidth = biggest - smallest; 
+			if(width < cwidth){
+				width = cwidth;
+			}
+		}
+		return width;
+	}
 	
 	
 
 	// ------------------------------------------------------------------------
 
-	Point getPos() {
+	public Point getPos() {
 		return mPos;
 	}
 
-	void setPos(Point pos) {
+	public void setPos(Point pos) {
 		mPos = pos;
 	}
 
@@ -271,11 +303,11 @@ public class Tetromino {
 	}
 
 	public void startLeftHeldTimer() {
-		leftHeldTimer.start();
+		leftHeldTimer.setEnabled(true);
 	}
 
 	public void startRightHeldTimer() {
-		rightHeldTimer.start();
+		rightHeldTimer.setEnabled(true);
 	}
 
 	public boolean isDone() {

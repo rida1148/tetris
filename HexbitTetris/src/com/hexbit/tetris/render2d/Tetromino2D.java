@@ -15,18 +15,15 @@ import com.hexbit.tetris.Tetromino;
 import com.hexbit.tetris.Timer;
 
 public class Tetromino2D extends Tetromino {
-
 	final float GHOST_ALPHA = 0.3f;
 
 	private Texture mCellTexture;
 
-	Timer timer = new Timer(2);
 
 	private Tetromino2D(int id, String imageFolderName) {
 		super(id);
 		mCellTexture = new Texture(Gdx.files.internal(imageFolderName + "/"
 				+ id + ".png"));
-		timer.pause();
 	}
 
 	public Tetromino2D(String imageFolderName) {
@@ -65,6 +62,7 @@ public class Tetromino2D extends Tetromino {
 			}
 
 			sb.setColor(c.r, c.g, c.b, 1f);
+			GraphicUtils.disableAlpha();
 		}
 		
 	}
@@ -83,26 +81,9 @@ public class Tetromino2D extends Tetromino {
 		}
 	}
 	
-	@Override
-	public void update(Matrix matrix, float delta) {
-		timer.tick(delta);
-		
-		if(timer.isFinished()){
-			timer.pause();
-		}
-		super.update(matrix, delta);
-	}
-	
-	@Override
-	public void hardDrop(Matrix matrix) {
-		timer.reset();
-		timer.start();
-		super.hardDrop(matrix);
-	}
 
 	public void dispose() {
 		mCellTexture.dispose();
 	}
-	
 
 }
